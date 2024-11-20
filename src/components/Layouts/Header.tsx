@@ -112,8 +112,8 @@ const Header = () => {
                 <div className="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-black">
                     <div className="horizontal-logo flex lg:hidden justify-between items-center ltr:mr-2 rtl:ml-2">
                         <Link to="/" className="main-logo flex items-center shrink-0">
-                            <img className="w-8 ltr:-ml-1 rtl:-mr-1 inline" src="/assets/images/logo.svg" alt="logo" />
-                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5  font-semibold  align-middle hidden md:inline dark:text-white-light transition-all duration-300">VRISTO</span>
+                            <img className="w-8 ltr:-ml-1 rtl:-mr-1 inline" src="/assets/images/logo.png" alt="logo" />
+                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5  font-semibold  align-middle hidden md:inline dark:text-white-light transition-all duration-300">NMS</span>
                         </Link>
                         <button
                             type="button"
@@ -640,28 +640,12 @@ const Header = () => {
                                         fill="currentColor"
                                     />
                                 </svg>
-                                <span className="px-1">{t('dashboard')}</span>
+                                <NavLink to="/">{t('dashboard')}</NavLink>
+                                
                             </div>
-                            <div className="right_arrow">
-                                <svg className="rotate-90" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </div>
+                            
                         </button>
-                        <ul className="sub-menu">
-                            <li>
-                                <NavLink to="/">{t('sales')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/analytics">{t('analytics')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/finance">{t('finance')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/crypto">{t('crypto')}</NavLink>
-                            </li>
-                        </ul>
+                        
                     </li>
                     <li className="menu nav-item relative">
                         <button type="button" className="nav-link">

@@ -6,7 +6,7 @@ const defaultState = {
     isDarkMode: false,
     mainLayout: 'app',
     theme: 'light',
-    menu: 'vertical',
+    menu: 'horizontal',
     layout: 'full',
     rtlClass: 'ltr',
     animation: '',
@@ -15,21 +15,9 @@ const defaultState = {
     sidebar: false,
     pageTitle: '',
     languageList: [
-        { code: 'zh', name: 'Chinese' },
-        { code: 'da', name: 'Danish' },
+        
         { code: 'en', name: 'English' },
-        { code: 'fr', name: 'French' },
-        { code: 'de', name: 'German' },
-        { code: 'el', name: 'Greek' },
-        { code: 'hu', name: 'Hungarian' },
-        { code: 'it', name: 'Italian' },
-        { code: 'ja', name: 'Japanese' },
-        { code: 'pl', name: 'Polish' },
-        { code: 'pt', name: 'Portuguese' },
-        { code: 'ru', name: 'Russian' },
-        { code: 'es', name: 'Spanish' },
-        { code: 'sv', name: 'Swedish' },
-        { code: 'tr', name: 'Turkish' },
+        
     ],
     semidark: false,
 };
