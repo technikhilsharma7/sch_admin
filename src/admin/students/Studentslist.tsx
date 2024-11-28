@@ -1,5 +1,6 @@
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+import { useState, Fragment, useEffect } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
 import sortBy from 'lodash/sortBy';
 import { downloadExcel } from 'react-export-table-to-excel';
 import { useDispatch } from 'react-redux';
@@ -7,6 +8,13 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { NavLink } from 'react-router-dom';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css';
+import * as Yup from 'yup';
+import { Field, Form, Formik } from 'formik';
+import Swal from 'sweetalert2';
+
 
 const rowData = [
     {
@@ -513,7 +521,62 @@ const rowData = [
 
 const col = ['id', 'firstName', 'lastName', 'course', 'age', 'dob', 'email', 'phone'];
 
+const editForm = () => {
+    const toast = Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+    });
+    toast.fire({
+        icon: 'success',
+        title: 'Form submitted successfully',
+        padding: '10px 20px',
+    });
+};
+
+const EditedForm = Yup.object().shape({
+    firstname: Yup.string().required('Please fill the first name'),
+    lastname: Yup.string().required('Please fill the last name'),
+    email: Yup.string().email('Invalid email').required('Please fill the Email'),
+    select: Yup.string().required('Please Select the field'),
+    city: Yup.string().required('Please provide a valid city'),
+    state: Yup.string().required('Please provide a valid state'),
+    zip: Yup.string().required('Please provide a valid zip'),
+});
+
+const submitForm = () => {
+    const toast = Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+    });
+    toast.fire({
+        icon: 'success',
+        title: 'Form submitted successfully',
+        padding: '10px 20px',
+    });
+};
+
+const SubmittedForm = Yup.object().shape({
+    firstname: Yup.string().required('Please fill the first name'),
+    lastname: Yup.string().required('Please fill the last name'),
+    email: Yup.string().email('Invalid email').required('Please fill the Email'),
+    select: Yup.string().required('Please Select the field'),
+    city: Yup.string().required('Please provide a valid city'),
+    state: Yup.string().required('Please provide a valid state'),
+    zip: Yup.string().required('Please provide a valid zip'),
+});
+
+
 const Studentlist = () => {
+    // Popup Model
+    const [modal1, setModal1] = useState(false);
+    const [modal2, setModal2] = useState(false);
+
+   
+    
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Export Table'));
@@ -717,6 +780,329 @@ const Studentlist = () => {
     };
     return (
         <div>
+            <div>
+            <Transition appear show={modal1} as={Fragment}>
+                                <Dialog as="div" open={modal1} onClose={() => setModal1(false)}>
+                                    <Transition.Child
+                                        as={Fragment}
+                                        enter="ease-out duration-300"
+                                        enterFrom="opacity-0"
+                                        enterTo="opacity-100"
+                                        leave="ease-in duration-200"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                    >
+                                        <div className="fixed inset-0" />
+                                    </Transition.Child>
+                                    <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                                        <div className="flex min-h-screen items-start justify-center px-4">
+                                            <Transition.Child
+                                                as={Fragment}
+                                                enter="ease-out duration-300"
+                                                enterFrom="opacity-0 scale-95"
+                                                enterTo="opacity-100 scale-100"
+                                                leave="ease-in duration-200"
+                                                leaveFrom="opacity-100 scale-100"
+                                                leaveTo="opacity-0 scale-95"
+                                            >
+                                                <Dialog.Panel as="div" className="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
+                                                    <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
+                                                        <div className="text-lg font-bold">Modal Title</div>
+                                                        <button type="button" className="text-white-dark hover:text-dark" onClick={() => setModal1(false)}>
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="20"
+                                                                height="20"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                strokeWidth="1.5"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                            >
+                                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                    <div className="p-5">
+                                                    <Formik
+    initialValues={{
+        firstname: 'Shaun',
+        lastname: 'Park',
+        email: '',
+        select: '',
+        city: '',
+        state: '',
+        zip: '',
+    }}
+    validationSchema={submitForm}
+    onSubmit={() => {}}
+>
+    {({ errors, submitCount, touched, values }) => (
+        <Form className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className={submitCount ? (errors.firstname ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="firstname">First Name </label>
+                    <Field name="firstname" type="text" id="firstname" placeholder="Enter First Name" className="form-input" />
+
+                    {submitCount ? (
+                        errors.firstname ? (
+                            <div className="text-danger mt-1">{errors.firstname}</div>
+                        ) : (
+                            <div className="text-success mt-1">Looks Good!</div>
+                        )
+                    ) : (
+                        ''
+                    )}
+                </div>
+
+                <div className={submitCount ? (errors.lastname ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="fullName">Last Name </label>
+                    <Field name="lastname" type="text" id="lastname" placeholder="Enter Last Name" className="form-input" />
+
+                    {submitCount ? errors.lastname ? <div className="text-danger mt-1">{errors.lastname}</div> : <div className="text-success mt-1">Looks Good!</div> : ''}
+                </div>
+            <div className={submitCount ? (errors.email ? 'has-error' : 'has-success') : ''}>
+                <label htmlFor="Email">Email</label>
+                <Field name="email" type="text" id="Email" placeholder="Enter Email" className="form-input" />
+
+                {submitCount ? errors.email ? <div className="text-danger mt-1">{errors.email}</div> : <div className="text-success mt-1">Looks Good!</div> : ''}
+            </div>
+            <div className={submitCount ? (errors.select ? 'has-error' : 'has-success') : ''}>
+            <label htmlFor="Course">Select Course</label>
+                <Field as="select" name="select" className="form-select">
+                    <option value="">Open this select menu</option>
+                    <option value="One">One</option>
+                    <option value="Two">Two</option>
+                    <option value="Three">Three</option>
+                </Field>
+                {submitCount ? (
+                    errors.select ? (
+                        <div className=" text-danger mt-1">{errors.select}</div>
+                    ) : (
+                        <div className=" text-[#1abc9c] mt-1">Example valid custom select feedback</div>
+                    )
+                ) : (
+                    ''
+                )}
+            </div>
+
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <div className={`md:col-span-2 ${submitCount ? (errors.city ? 'has-error' : 'has-success') : ''}`}>
+                    <label htmlFor="customeCity">City</label>
+                    <Field name="city" type="text" id="city" placeholder="Enter City" className="form-input" />
+
+                    {submitCount ? errors.city ? <div className="text-danger mt-1">{errors.city}</div> : <div className="text-success mt-1">Looks Good!</div> : ''}
+                </div>
+
+                <div className={submitCount ? (errors.state ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="customeState">State</label>
+                    <Field name="state" type="text" id="customeState" placeholder="Enter State" className="form-input" />
+                    {submitCount ? errors.state ? <div className="text-danger mt-1">{errors.state}</div> : <div className="text-success mt-1">Looks Good!</div> : ''}
+                </div>
+
+                <div className={submitCount ? (errors.zip ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="customeZip">Zip</label>
+                    <Field name="zip" type="text" id="customeZip" placeholder="Enter Zip" className="form-input" />
+                    {submitCount ? errors.zip ? <div className="text-danger mt-1">{errors.zip}</div> : <div className="text-success mt-1">Looks Good!</div> : ''}
+                </div>
+            </div>
+
+            
+
+            <button
+                type="submit"
+                className="btn btn-primary !mt-6"
+                onClick={() => {
+                    if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
+                        submitForm();
+                    }
+                }}
+            >
+                Submit Form
+            </button>
+        </Form>
+    )}
+</Formik>
+                                                        <div className="mt-8 flex items-center justify-end">
+                                                            <button type="button" className="btn btn-outline-danger" onClick={() => setModal1(false)}>
+                                                                Discard
+                                                            </button>
+                                                            <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => setModal1(false)}>
+                                                                Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </Dialog.Panel>
+                                            </Transition.Child>
+                                        </div>
+                                    </div>
+                                </Dialog>
+                            </Transition>
+
+                            <Transition appear show={modal2} as={Fragment}>
+                                <Dialog as="div" open={modal2} onClose={() => setModal2(false)}>
+                                    <Transition.Child
+                                        as={Fragment}
+                                        enter="ease-out duration-300"
+                                        enterFrom="opacity-0"
+                                        enterTo="opacity-100"
+                                        leave="ease-in duration-200"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                    >
+                                        <div className="fixed inset-0" />
+                                    </Transition.Child>
+                                    <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                                        <div className="flex min-h-screen items-start justify-center px-4">
+                                            <Transition.Child
+                                                as={Fragment}
+                                                enter="ease-out duration-300"
+                                                enterFrom="opacity-0 scale-95"
+                                                enterTo="opacity-100 scale-100"
+                                                leave="ease-in duration-200"
+                                                leaveFrom="opacity-100 scale-100"
+                                                leaveTo="opacity-0 scale-95"
+                                            >
+                                                <Dialog.Panel as="div" className="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
+                                                    <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
+                                                        <div className="text-lg font-bold">Modal Title</div>
+                                                        <button type="button" className="text-white-dark hover:text-dark" onClick={() => setModal2(false)}>
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="20"
+                                                                height="20"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                strokeWidth="1.5"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                            >
+                                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                    <div className="p-5">
+                                                    <Formik
+    initialValues={{
+        firstname: 'Shaun',
+        lastname: 'Park',
+        email: '',
+        select: '',
+        city: '',
+        state: '',
+        zip: '',
+    }}
+    validationSchema={submitForm}
+    onSubmit={() => {}}
+>
+    {({ errors, submitCount, touched, values }) => (
+        <Form className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className={submitCount ? (errors.firstname ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="firstname">First Name </label>
+                    <Field name="firstname" type="text" id="firstname" placeholder="Enter First Name" className="form-input" />
+
+                    {submitCount ? (
+                        errors.firstname ? (
+                            <div className="text-danger mt-1">{errors.firstname}</div>
+                        ) : (
+                            <div className="text-success mt-1">Looks Good!</div>
+                        )
+                    ) : (
+                        ''
+                    )}
+                </div>
+
+                <div className={submitCount ? (errors.lastname ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="fullName">Last Name </label>
+                    <Field name="lastname" type="text" id="lastname" placeholder="Enter Last Name" className="form-input" />
+
+                    {submitCount ? errors.lastname ? <div className="text-danger mt-1">{errors.lastname}</div> : <div className="text-success mt-1">Looks Good!</div> : ''}
+                </div>
+            <div className={submitCount ? (errors.email ? 'has-error' : 'has-success') : ''}>
+                <label htmlFor="Email">Email</label>
+                <Field name="email" type="text" id="Email" placeholder="Enter Email" className="form-input" />
+
+                {submitCount ? errors.email ? <div className="text-danger mt-1">{errors.email}</div> : <div className="text-success mt-1">Looks Good!</div> : ''}
+            </div>
+            <div className={submitCount ? (errors.select ? 'has-error' : 'has-success') : ''}>
+            <label htmlFor="Course">Select Course</label>
+                <Field as="select" name="select" className="form-select">
+                    <option value="">Open this select menu</option>
+                    <option value="One">One</option>
+                    <option value="Two">Two</option>
+                    <option value="Three">Three</option>
+                </Field>
+                {submitCount ? (
+                    errors.select ? (
+                        <div className=" text-danger mt-1">{errors.select}</div>
+                    ) : (
+                        <div className=" text-[#1abc9c] mt-1">Example valid custom select feedback</div>
+                    )
+                ) : (
+                    ''
+                )}
+            </div>
+
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <div className={`md:col-span-2 ${submitCount ? (errors.city ? 'has-error' : 'has-success') : ''}`}>
+                    <label htmlFor="customeCity">City</label>
+                    <Field name="city" type="text" id="city" placeholder="Enter City" className="form-input" />
+
+                    {submitCount ? errors.city ? <div className="text-danger mt-1">{errors.city}</div> : <div className="text-success mt-1">Looks Good!</div> : ''}
+                </div>
+
+                <div className={submitCount ? (errors.state ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="customeState">State</label>
+                    <Field name="state" type="text" id="customeState" placeholder="Enter State" className="form-input" />
+                    {submitCount ? errors.state ? <div className="text-danger mt-1">{errors.state}</div> : <div className="text-success mt-1">Looks Good!</div> : ''}
+                </div>
+
+                <div className={submitCount ? (errors.zip ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="customeZip">Zip</label>
+                    <Field name="zip" type="text" id="customeZip" placeholder="Enter Zip" className="form-input" />
+                    {submitCount ? errors.zip ? <div className="text-danger mt-1">{errors.zip}</div> : <div className="text-success mt-1">Looks Good!</div> : ''}
+                </div>
+            </div>
+
+            
+
+            <button
+                type="submit"
+                className="btn btn-primary !mt-6"
+                onClick={() => {
+                    if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
+                        submitForm();
+                    }
+                }}
+            >
+                Submit Form
+            </button>
+        </Form>
+    )}
+</Formik>
+                                                        <div className="mt-8 flex items-center justify-end">
+                                                            <button type="button" className="btn btn-outline-danger" onClick={() => setModal2(false)}>
+                                                                Discard
+                                                            </button>
+                                                            <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => setModal2(false)}>
+                                                                Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </Dialog.Panel>
+                                            </Transition.Child>
+                                        </div>
+                                    </div>
+                                </Dialog>
+                            </Transition>
+            </div>
             <div className="panel">
                 <div className="flex md:items-center justify-between md:flex-row flex-col mb-4.5 gap-5">
                     <div className="flex items-center flex-wrap">
@@ -775,7 +1161,12 @@ const Studentlist = () => {
                     </div>
 
                     <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                    <button type="button" className="btn btn-primary">Add Student</button>
+                    {/* <button type="button" className="btn btn-primary">Add Student</button> */}
+                    <div className="flex items-center justify-center">
+                                <button type="button" className="btn btn-primary" onClick={() => setModal1(true)}>
+                                    Add Student
+                                </button>
+                            </div>
                     
                     
                 </div>
@@ -787,9 +1178,9 @@ const Studentlist = () => {
                         columns={[
                             { accessor: 'id', title: '#', sortable: true },
                             { accessor: 'firstName', sortable: true },
-                            { accessor: 'lastName', sortable: true },
+                            // { accessor: 'lastName', sortable: true },
                             { accessor: 'course', title: 'Course', sortable: true },
-                            { accessor: 'age', title: 'Age', sortable: true },
+                            // { accessor: 'age', title: 'Age', sortable: true },
                             {
                                 accessor: 'dob',
                                 title: 'Start Date',
@@ -829,20 +1220,30 @@ const Studentlist = () => {
                                 render: () => (
                                     <div className="flex items-center w-max mx-auto gap-2">
                                         <Tippy content="Edit">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5">
-                                                <path
-                                                    d="M15.2869 3.15178L14.3601 4.07866L5.83882 12.5999L5.83881 12.5999C5.26166 13.1771 4.97308 13.4656 4.7249 13.7838C4.43213 14.1592 4.18114 14.5653 3.97634 14.995C3.80273 15.3593 3.67368 15.7465 3.41556 16.5208L2.32181 19.8021L2.05445 20.6042C1.92743 20.9852 2.0266 21.4053 2.31063 21.6894C2.59466 21.9734 3.01478 22.0726 3.39584 21.9456L4.19792 21.6782L7.47918 20.5844L7.47919 20.5844C8.25353 20.3263 8.6407 20.1973 9.00498 20.0237C9.43469 19.8189 9.84082 19.5679 10.2162 19.2751C10.5344 19.0269 10.8229 18.7383 11.4001 18.1612L11.4001 18.1612L19.9213 9.63993L20.8482 8.71306C22.3839 7.17735 22.3839 4.68748 20.8482 3.15178C19.3125 1.61607 16.8226 1.61607 15.2869 3.15178Z"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                />
-                                                <path
-                                                    opacity="0.5"
-                                                    d="M14.36 4.07812C14.36 4.07812 14.4759 6.04774 16.2138 7.78564C17.9517 9.52354 19.9213 9.6394 19.9213 9.6394M4.19789 21.6777L2.32178 19.8015"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                />
-                                            </svg>
-                                        </Tippy>
+    <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-5 h-5"
+        onClick={() => setModal2(true)} // Add the onClick handler here
+    >
+        <path
+            d="M15.2869 3.15178L14.3601 4.07866L5.83882 12.5999L5.83881 12.5999C5.26166 13.1771 4.97308 13.4656 4.7249 13.7838C4.43213 14.1592 4.18114 14.5653 3.97634 14.995C3.80273 15.3593 3.67368 15.7465 3.41556 16.5208L2.32181 19.8021L2.05445 20.6042C1.92743 20.9852 2.0266 21.4053 2.31063 21.6894C2.59466 21.9734 3.01478 22.0726 3.39584 21.9456L4.19792 21.6782L7.47918 20.5844L7.47919 20.5844C8.25353 20.3263 8.6407 20.1973 9.00498 20.0237C9.43469 19.8189 9.84082 19.5679 10.2162 19.2751C10.5344 19.0269 10.8229 18.7383 11.4001 18.1612L11.4001 18.1612L19.9213 9.63993L20.8482 8.71306C22.3839 7.17735 22.3839 4.68748 20.8482 3.15178C19.3125 1.61607 16.8226 1.61607 15.2869 3.15178Z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+        />
+        <path
+            opacity="0.5"
+            d="M14.36 4.07812C14.36 4.07812 14.4759 6.04774 16.2138 7.78564C17.9517 9.52354 19.9213 9.6394 19.9213 9.6394M4.19789 21.6777L2.32178 19.8015"
+            stroke="currentColor"
+            strokeWidth="1.5"
+        />
+    </svg>
+</Tippy>
+
+                                       
                                         <Tippy content="Delete">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5">
                                                 <path
