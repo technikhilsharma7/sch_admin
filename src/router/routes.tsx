@@ -1,5 +1,8 @@
 import { lazy } from 'react';
-const Index = lazy(() => import('../../src/admin/Layouts/dashboard'));
+import Studentchat from '../admin/students/Studentchat';
+import Studentslist from '../admin/students/Studentslist';
+import Studentsmail from '../admin/students/Studentsmail';
+const Index = lazy(() => import('../admin/Dashboard'));
 const Analytics = lazy(() => import('../pages/Analytics'));
 const Finance = lazy(() => import('../pages/Finance'));
 const Crypto = lazy(() => import('../pages/Crypto'));
@@ -103,6 +106,19 @@ const routes = [
     {
         path: '/',
         element: <Index />,
+    },
+    {
+        path: '/students/Studentslist',
+        element: <Studentslist />,
+    },
+    {
+        path: '/students/Studentschat',
+        element: <Studentchat />,
+    },
+    ,
+    {
+        path: '/students/Studentsmail',
+        element: <Studentsmail />,
     },
     // {
     //     path: '/index',
