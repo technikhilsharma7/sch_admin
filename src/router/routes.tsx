@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import Studentchat from '../admin/students/Studentchat';
 import Studentslist from '../admin/students/Studentslist';
 import Studentsmail from '../admin/students/Studentsmail';
+import Button from '../admin/students/Button';
 const Index = lazy(() => import('../admin/Dashboard'));
 const Analytics = lazy(() => import('../pages/Analytics'));
 const Finance = lazy(() => import('../pages/Finance'));
@@ -119,6 +120,10 @@ const routes = [
     {
         path: '/students/Studentsmail',
         element: <Studentsmail />,
+    },
+    {
+        path: '/students/Button',
+        element: <Button/>,
     },
     // {
     //     path: '/index',
