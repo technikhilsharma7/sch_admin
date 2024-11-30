@@ -1,9 +1,7 @@
 import { lazy } from 'react';
-import Studentchat from '../admin/students/Studentchat';
-import Studentslist from '../admin/students/Studentslist';
-import Studentsmail from '../admin/students/Studentsmail';
-import Button from '../admin/students/Button';
+
 const Index = lazy(() => import('../admin/Dashboard'));
+const Studentslist = lazy(() => import('../admin/students/Studentslist'));
 const Analytics = lazy(() => import('../pages/Analytics'));
 const Finance = lazy(() => import('../pages/Finance'));
 const Crypto = lazy(() => import('../pages/Crypto'));
@@ -111,19 +109,6 @@ const routes = [
     {
         path: '/students/Studentslist',
         element: <Studentslist />,
-    },
-    {
-        path: '/students/Studentschat',
-        element: <Studentchat />,
-    },
-    ,
-    {
-        path: '/students/Studentsmail',
-        element: <Studentsmail />,
-    },
-    {
-        path: '/students/Button',
-        element: <Button/>,
     },
     // {
     //     path: '/index',
