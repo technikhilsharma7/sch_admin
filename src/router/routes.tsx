@@ -2,6 +2,8 @@ import { lazy } from 'react';
 
 const Index = lazy(() => import('../admin/Dashboard'));
 const Studentslist = lazy(() => import('../admin/students/Studentslist'));
+const Login = lazy(() => import('../admin/user/Login'));
+const Signup = lazy(() => import('../admin/user/Signup'));
 const Analytics = lazy(() => import('../pages/Analytics'));
 const Finance = lazy(() => import('../pages/Finance'));
 const Crypto = lazy(() => import('../pages/Crypto'));
@@ -109,6 +111,14 @@ const routes = [
     {
         path: '/students/Studentslist',
         element: <Studentslist />,
+    },
+    {
+        path:'/user/login',
+        element:<Login />,
+    },
+    {
+        path:'/user/signup',
+        element: <Signup />,
     },
     // {
     //     path: '/index',
