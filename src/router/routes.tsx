@@ -1,4 +1,6 @@
 import { lazy } from 'react';
+import FormToTable from '../admin/FormToTable';
+import Studentlistold from '../admin/students/Studentslistold';
 
 const Index = lazy(() => import('../admin/Dashboard'));
 const Studentslist = lazy(() => import('../admin/students/Studentslist'));
@@ -104,6 +106,14 @@ const Clipboard = lazy(() => import('../pages/Forms/Clipboard'));
 
 const routes = [
     // dashboard
+    {
+        path:'formtotable',
+        element: <FormToTable/>
+    },
+    {
+        path:'studentlistold',
+        element: <Studentlistold />
+    },
     {
         path: '/',
         element: <Index />,
@@ -460,6 +470,7 @@ const routes = [
         element: <LoginCover />,
         layout: 'blank',
     },
+
     {
         path: '/auth/cover-register',
         element: <RegisterCover />,
