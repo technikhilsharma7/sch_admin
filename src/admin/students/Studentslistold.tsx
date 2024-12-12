@@ -15,603 +15,59 @@ import * as Yup from "yup";
 import { Field, Form, Formik } from "formik";
 import Swal from "sweetalert2";
 
-const rowData = [
-  {
-    id: 1,
-    firstName: "Caroline",
-    lastName: "Jensen",
-    email: "carolinejensen@zidant.com",
-    dob: "2004-05-28",
-    // address: {
-    //     street: '529 Scholes Street',
-    //     city: 'Temperanceville',
-    //     zipcode: 5235,
-    //     geo: {
-    //         lat: 23.806115,
-    //         lng: 164.677197,
-    //     },
-    // },
-    phone: "+1 (821) 447-3782",
-    isActive: true,
-    age: 39,
-    course: "POLARAX",
-  },
-  {
-    id: 2,
-    firstName: "Celeste",
-    lastName: "Grant",
-    email: "celestegrant@polarax.com",
-    dob: "1989-11-19",
-    // address: {
-    //     street: '639 Kimball Street',
-    //     city: 'Bascom',
-    //     zipcode: 8907,
-    //     geo: {
-    //         lat: 65.954483,
-    //         lng: 98.906478,
-    //     },
-    // },
-    phone: "+1 (838) 515-3408",
-    isActive: false,
-    age: 32,
-    course: "MANGLO",
-  },
-  {
-    id: 3,
-    firstName: "Tillman",
-    lastName: "Forbes",
-    email: "tillmanforbes@manglo.com",
-    dob: "2016-09-05",
-    // address: {
-    //     street: '240 Vandalia Avenue',
-    //     city: 'Thynedale',
-    //     zipcode: 8994,
-    //     geo: {
-    //         lat: -34.949388,
-    //         lng: -82.958111,
-    //     },
-    // },
-    phone: "+1 (969) 496-2892",
-    isActive: false,
-    age: 26,
-    course: "APPLIDECK",
-  },
-  {
-    id: 4,
-    firstName: "Daisy",
-    lastName: "Whitley",
-    email: "daisywhitley@applideck.com",
-    dob: "1987-03-23",
-    // address: {
-    //     street: '350 Pleasant Place',
-    //     city: 'Idledale',
-    //     zipcode: 9369,
-    //     geo: {
-    //         lat: -54.458809,
-    //         lng: -127.476556,
-    //     },
-    // },
-    phone: "+1 (861) 564-2877",
-    isActive: true,
-    age: 21,
-    course: "VOLAX",
-  },
-  {
-    id: 5,
-    firstName: "Weber",
-    lastName: "Bowman",
-    email: "weberbowman@volax.com",
-    dob: "1983-02-24",
-    // address: {
-    //     street: '154 Conway Street',
-    //     city: 'Broadlands',
-    //     zipcode: 8131,
-    //     geo: {
-    //         lat: 54.501351,
-    //         lng: -167.47138,
-    //     },
-    // },
-    phone: "+1 (962) 466-3483",
-    isActive: false,
-    age: 26,
-    course: "ORBAXTER",
-  },
-  {
-    id: 6,
-    firstName: "Buckley",
-    lastName: "Townsend",
-    email: "buckleytownsend@orbaxter.com",
-    dob: "2011-05-29",
-    // address: {
-    //     street: '131 Guernsey Street',
-    //     city: 'Vallonia',
-    //     zipcode: 6779,
-    //     geo: {
-    //         lat: -2.681655,
-    //         lng: 3.528942,
-    //     },
-    // },
-    phone: "+1 (884) 595-2643",
-    isActive: true,
-    age: 40,
-    course: "OPPORTECH",
-  },
-  {
-    id: 7,
-    firstName: "Latoya",
-    lastName: "Bradshaw",
-    email: "latoyabradshaw@opportech.com",
-    dob: "2010-11-23",
-    // address: {
-    //     street: '668 Lenox Road',
-    //     city: 'Lowgap',
-    //     zipcode: 992,
-    //     geo: {
-    //         lat: 36.026423,
-    //         lng: 130.412198,
-    //     },
-    // },
-    phone: "+1 (906) 474-3155",
-    isActive: true,
-    age: 24,
-    course: "GORGANIC",
-  },
-  {
-    id: 8,
-    firstName: "Kate",
-    lastName: "Lindsay",
-    email: "katelindsay@gorganic.com",
-    dob: "1987-07-02",
-    // address: {
-    //     street: '773 Harrison Avenue',
-    //     city: 'Carlton',
-    //     zipcode: 5909,
-    //     geo: {
-    //         lat: 42.464724,
-    //         lng: -12.948403,
-    //     },
-    // },
-    phone: "+1 (930) 546-2952",
-    isActive: true,
-    age: 24,
-    course: "AVIT",
-  },
-  {
-    id: 9,
-    firstName: "Marva",
-    lastName: "Sandoval",
-    email: "marvasandoval@avit.com",
-    dob: "2010-11-02",
-    // address: {
-    //     street: '200 Malta Street',
-    //     city: 'Tuskahoma',
-    //     zipcode: 1292,
-    //     geo: {
-    //         lat: -52.206169,
-    //         lng: 74.19452,
-    //     },
-    // },
-    phone: "+1 (927) 566-3600",
-    isActive: false,
-    age: 28,
-    course: "QUILCH",
-  },
-  {
-    id: 10,
-    firstName: "Decker",
-    lastName: "Russell",
-    email: "deckerrussell@quilch.com",
-    dob: "1994-04-21",
-    // address: {
-    //     street: '708 Bath Avenue',
-    //     city: 'Coultervillle',
-    //     zipcode: 1268,
-    //     geo: {
-    //         lat: -41.550295,
-    //         lng: -146.598075,
-    //     },
-    // },
-    phone: "+1 (846) 535-3283",
-    isActive: false,
-    age: 27,
-    course: "MEMORA",
-  },
-  {
-    id: 11,
-    firstName: "Odom",
-    lastName: "Mills",
-    email: "odommills@memora.com",
-    dob: "2010-01-24",
-    // address: {
-    //     street: '907 Blake Avenue',
-    //     city: 'Churchill',
-    //     zipcode: 4400,
-    //     geo: {
-    //         lat: -56.061694,
-    //         lng: -130.238523,
-    //     },
-    // },
-    phone: "+1 (995) 525-3402",
-    isActive: true,
-    age: 34,
-    course: "ZORROMOP",
-  },
-  {
-    id: 12,
-    firstName: "Sellers",
-    lastName: "Walters",
-    email: "sellerswalters@zorromop.com",
-    dob: "1975-11-12",
-    // address: {
-    //     street: '978 Oakland Place',
-    //     city: 'Gloucester',
-    //     zipcode: 3802,
-    //     geo: {
-    //         lat: 11.732587,
-    //         lng: 96.118099,
-    //     },
-    // },
-    phone: "+1 (830) 430-3157",
-    isActive: true,
-    age: 28,
-    course: "ORBOID",
-  },
-  {
-    id: 13,
-    firstName: "Wendi",
-    lastName: "Powers",
-    email: "wendipowers@orboid.com",
-    dob: "1979-06-02",
-    // address: {
-    //     street: '376 Greenpoint Avenue',
-    //     city: 'Elliott',
-    //     zipcode: 9149,
-    //     geo: {
-    //         lat: -78.159578,
-    //         lng: -9.835103,
-    //     },
-    // },
-    phone: "+1 (863) 457-2088",
-    isActive: true,
-    age: 31,
-    course: "SNORUS",
-  },
-  {
-    id: 14,
-    firstName: "Sophie",
-    lastName: "Horn",
-    email: "sophiehorn@snorus.com",
-    dob: "2018-09-20",
-    // address: {
-    //     street: '343 Doughty Street',
-    //     city: 'Homestead',
-    //     zipcode: 330,
-    //     geo: {
-    //         lat: 65.484087,
-    //         lng: 137.413998,
-    //     },
-    // },
-    phone: "+1 (885) 418-3948",
-    isActive: true,
-    age: 22,
-    course: "XTH",
-  },
-  {
-    id: 15,
-    firstName: "Levine",
-    lastName: "Rodriquez",
-    email: "levinerodriquez@xth.com",
-    dob: "1973-02-08",
-    // address: {
-    //     street: '643 Allen Avenue',
-    //     city: 'Weedville',
-    //     zipcode: 8931,
-    //     geo: {
-    //         lat: -63.185586,
-    //         lng: 117.327808,
-    //     },
-    // },
-    phone: "+1 (999) 565-3239",
-    isActive: true,
-    age: 27,
-    course: "COMTRACT",
-  },
-  {
-    id: 16,
-    firstName: "Little",
-    lastName: "Hatfield",
-    email: "littlehatfield@comtract.com",
-    dob: "2012-01-03",
-    // address: {
-    //     street: '194 Anthony Street',
-    //     city: 'Williston',
-    //     zipcode: 7456,
-    //     geo: {
-    //         lat: 47.480837,
-    //         lng: 6.085909,
-    //     },
-    // },
-    phone: "+1 (812) 488-3011",
-    isActive: false,
-    age: 33,
-    course: "ZIDANT",
-  },
-  {
-    id: 17,
-    firstName: "Larson",
-    lastName: "Kelly",
-    email: "larsonkelly@zidant.com",
-    dob: "2010-06-14",
-    // address: {
-    //     street: '978 Indiana Place',
-    //     city: 'Innsbrook',
-    //     zipcode: 639,
-    //     geo: {
-    //         lat: -71.766732,
-    //         lng: 150.854345,
-    //     },
-    // },
-    phone: "+1 (892) 484-2162",
-    isActive: true,
-    age: 20,
-    course: "SUREPLEX",
-  },
-  {
-    id: 18,
-    firstName: "Kendra",
-    lastName: "Molina",
-    email: "kendramolina@sureplex.com",
-    dob: "2002-07-19",
-    // address: {
-    //     street: '567 Charles Place',
-    //     city: 'Kimmell',
-    //     zipcode: 1966,
-    //     geo: {
-    //         lat: 50.765816,
-    //         lng: -117.106499,
-    //     },
-    // },
-    phone: "+1 (920) 528-3330",
-    isActive: false,
-    age: 31,
-    course: "DANJA",
-  },
-  {
-    id: 19,
-    firstName: "Ebony",
-    lastName: "Livingston",
-    email: "ebonylivingston@danja.com",
-    dob: "1994-10-18",
-    // address: {
-    //     street: '284 Cass Place',
-    //     city: 'Navarre',
-    //     zipcode: 948,
-    //     geo: {
-    //         lat: 65.271256,
-    //         lng: -83.064729,
-    //     },
-    // },
-    phone: "+1 (970) 591-3039",
-    isActive: false,
-    age: 33,
-    course: "EURON",
-  },
-  {
-    id: 20,
-    firstName: "Kaufman",
-    lastName: "Rush",
-    email: "kaufmanrush@euron.com",
-    dob: "2011-07-10",
-    // address: {
-    //     street: '408 Kingsland Avenue',
-    //     city: 'Beaulieu',
-    //     zipcode: 7911,
-    //     geo: {
-    //         lat: 41.513153,
-    //         lng: 54.821641,
-    //     },
-    // },
-    phone: "+1 (924) 463-2934",
-    isActive: false,
-    age: 39,
-    course: "ILLUMITY",
-  },
-  {
-    id: 21,
-    firstName: "Frank",
-    lastName: "Hays",
-    email: "frankhays@illumity.com",
-    dob: "2005-06-15",
-    // address: {
-    //     street: '973 Caton Place',
-    //     city: 'Dargan',
-    //     zipcode: 4104,
-    //     geo: {
-    //         lat: 63.314988,
-    //         lng: -138.771323,
-    //     },
-    // },
-    phone: "+1 (930) 577-2670",
-    isActive: false,
-    age: 31,
-    course: "SYBIXTEX",
-  },
-  {
-    id: 22,
-    firstName: "Carmella",
-    lastName: "Mccarty",
-    email: "carmellamccarty@sybixtex.com",
-    dob: "1980-03-06",
-    // address: {
-    //     street: '919 Judge Street',
-    //     city: 'Canby',
-    //     zipcode: 8283,
-    //     geo: {
-    //         lat: 9.198597,
-    //         lng: -138.809971,
-    //     },
-    // },
-    phone: "+1 (876) 456-3218",
-    isActive: true,
-    age: 21,
-    course: "ZEDALIS",
-  },
-  {
-    id: 23,
-    firstName: "Massey",
-    lastName: "Owen",
-    email: "masseyowen@zedalis.com",
-    dob: "2012-03-01",
-    // address: {
-    //     street: '108 Seaview Avenue',
-    //     city: 'Slovan',
-    //     zipcode: 3599,
-    //     geo: {
-    //         lat: -74.648318,
-    //         lng: 99.620699,
-    //     },
-    // },
-    phone: "+1 (917) 567-3786",
-    isActive: false,
-    age: 40,
-    course: "DYNO",
-  },
-  {
-    id: 24,
-    firstName: "Lottie",
-    lastName: "Lowery",
-    email: "lottielowery@dyno.com",
-    dob: "1982-10-10",
-    // address: {
-    //     street: '557 Meserole Avenue',
-    //     city: 'Fowlerville',
-    //     zipcode: 4991,
-    //     geo: {
-    //         lat: 54.811546,
-    //         lng: -20.996515,
-    //     },
-    // },
-    phone: "+1 (912) 539-3498",
-    isActive: true,
-    age: 36,
-    course: "MULTIFLEX",
-  },
-  {
-    id: 25,
-    firstName: "Addie",
-    lastName: "Luna",
-    email: "addieluna@multiflex.com",
-    dob: "1988-05-01",
-    // address: {
-    //     street: '688 Bulwer Place',
-    //     city: 'Harmon',
-    //     zipcode: 7664,
-    //     geo: {
-    //         lat: -12.762766,
-    //         lng: -39.924497,
-    //     },
-    // },
-    phone: "+1 (962) 537-2981",
-    isActive: true,
-    age: 32,
-    course: "PHARMACON",
-  },
-];
-
-const col = [
-  "id",
-  "firstName",
-  "lastName",
-  "course",
-  "age",
-  "dob",
-  "email",
-  "phone",
-];
-
-const editForm = () => {
-  const toast = Swal.mixin({
-    toast: true,
-    position: "top",
-    showConfirmButton: false,
-    timer: 3000,
-  });
-  toast.fire({
-    icon: "success",
-    title: "Form Addstudent successfully",
-    padding: "10px 20px",
-  });
-};
-
-const EditstudentForm = Yup.object().shape({
-  fullName: Yup.string()
-    .required("Full Name is required")
-    .min(3, "Full Name must be at least 3 characters"),
-  email: Yup.string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
-    .required("Phone number is required"),
+const AddStudentFormSchema = Yup.object().shape({
+  fullName: Yup.string().required("Full Name is required").min(3, "Full Name must be at least 3 characters"),
+  email: Yup.string().email("Invalid email format").required("Email is required"),
+  phone: Yup.string().matches(/^[0-9]{10}$/, "Phone number must be 10 digits").required("Phone number is required"),
   course: Yup.string().required("Please select a course"),
   dob: Yup.date().required("Date of Birth is required"),
-  startDate: Yup.date().required("Start Date is required"),
-  age: Yup.number()
-    .positive("Age must be a positive number")
-    .required("Age is required"),
-  country: Yup.string().required("Country is required"),
-  city: Yup.string().required("City is required"),
-  pincode: Yup.string()
-    .matches(/^[0-9]{6}$/, "Pincode must be 6 digits")
-    .required("Pincode is required"),
-  status: Yup.string().required("Please select a status"),
-});
-
-const submitForm = () => {
-  const toast = Swal.mixin({
-    toast: true,
-    position: "top",
-    showConfirmButton: false,
-    timer: 3000,
-  });
-  toast.fire({
-    icon: "success",
-    title: "Form Addstudent successfully",
-    padding: "10px 20px",
-  });
-};
-
-const AddstudentForm = Yup.object().shape({
-  fullName: Yup.string()
-    .required("Full Name is required")
-    .min(3, "Full Name must be at least 3 characters"),
-  email: Yup.string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
-    .required("Phone number is required"),
-  course: Yup.string().required("Please select a course"),
-  dob: Yup.date().required("Date of Birth is required"),
-  startDate: Yup.date().required("Start Date is required"),
-  age: Yup.number()
-    .positive("Age must be a positive number")
-    .required("Age is required"),
-  country: Yup.string().required("Country is required"),
-  city: Yup.string().required("City is required"),
-  pincode: Yup.string()
-    .matches(/^[0-9]{6}$/, "Pincode must be 6 digits")
-    .required("Pincode is required"),
-  status: Yup.string().required("Please select a status"),
 });
 
 const Studentlistold = () => {
+
+  const [studentData, setStudentData] = useState([
+    {
+      id: 1,
+      fullName: "Caroline Jensen",
+      email: "carolinejensen@zidant.com",
+      phone: "+1 (821) 447-3782",
+      dob: "2004-05-28",
+      course: "POLARAX",
+    },
+  ]);
+
   // Popup Model
-  const [isAddstudent, setIsAddstudent] = useState(false);
+  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
   const [isEditstudent, setIsEditstudent] = useState(false);
-  const [modal1, setModal1] = useState(false);
   const [modal2, setModal2] = useState(false);
 
+
+  interface Student {
+    id?: number;
+    fullName: string;
+    email: string;
+    phone: string;
+    dob: string;
+    course: string;
+  }
+  
+  const handleAddStudent = (values: Student, { resetForm }: { resetForm: () => void }) => {
+    const newStudent = {
+      ...values,
+      id: studentData.length + 1,
+    };
+  
+    setStudentData((prev) => [...prev, newStudent]);
+  
+    Swal.fire({
+      icon: "success",
+      title: "Student added successfully",
+      timer: 3000,
+    });
+  
+    resetForm();
+    setIsAddStudentModalOpen(false);
+  };
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle("Export Table"));
@@ -619,7 +75,7 @@ const Studentlistold = () => {
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-  const [initialRecords, setInitialRecords] = useState(sortBy(rowData, "id"));
+  const [initialRecords, setInitialRecords] = useState(sortBy(studentData, "id"));
   const [recordsData, setRecordsData] = useState(initialRecords);
 
   const [search, setSearch] = useState("");
@@ -667,14 +123,12 @@ const Studentlistold = () => {
 
   useEffect(() => {
     setInitialRecords(() => {
-      return rowData.filter((item: any) => {
+      return studentData.filter((item: any) => {
         return (
           item.id.toString().includes(search.toLowerCase()) ||
-          item.firstName.toLowerCase().includes(search.toLowerCase()) ||
-          item.lastName.toLowerCase().includes(search.toLowerCase()) ||
+          item.fullName.toLowerCase().includes(search.toLowerCase()) ||
           item.course.toLowerCase().includes(search.toLowerCase()) ||
           item.email.toLowerCase().includes(search.toLowerCase()) ||
-          item.age.toString().toLowerCase().includes(search.toLowerCase()) ||
           item.dob.toLowerCase().includes(search.toLowerCase()) ||
           item.phone.toLowerCase().includes(search.toLowerCase())
         );
@@ -691,12 +145,10 @@ const Studentlistold = () => {
   }, [sortStatus]);
   const header = [
     "Id",
-    "Firstname",
-    "Lastname",
+    "Fullname",
     "Email",
-    "Start Date",
+    "DOB",
     "Phone No.",
-    "Age",
     "Course",
   ];
 
@@ -717,14 +169,14 @@ const Studentlistold = () => {
       sheet: "react-export-table-to-excel",
       tablePayload: {
         header,
-        body: rowData,
+        body: studentData,
       },
     });
   }
 
   const exportTable = (type: any) => {
     let columns: any = col;
-    let records = rowData;
+    let records = studentData;
     let filename = "table";
 
     let newVariable: any;
@@ -850,730 +302,80 @@ const Studentlistold = () => {
   return (
     <div>
       <div>
-        <Transition appear show={modal1} as={Fragment}>
-          <Dialog as="div" open={modal1} onClose={() => setModal1(false)}>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0" />
-            </Transition.Child>
-            <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
-              <div className="flex min-h-screen items-start justify-center px-4">
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
+        {/* Add Student Modal */}
+       <Transition appear show={isAddStudentModalOpen} as={Fragment}>
+        <Dialog as="div" open={isAddStudentModalOpen} onClose={() => setIsAddStudentModalOpen(false)}>
+          <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+            <div className="flex items-center justify-center min-h-screen px-4">
+              <Dialog.Panel className="panel max-w-lg p-5 text-black bg-white rounded-lg">
+                <Formik
+                  initialValues={{
+                    fullName: "",
+                    email: "",
+                    phone: "",
+                    dob: "",
+                    course: "",
+                  }}
+                  validationSchema={AddStudentFormSchema}
+                  onSubmit={handleAddStudent}
                 >
-                  <Dialog.Panel
-                    as="div"
-                    className="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark"
-                  >
-                    <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
-                      <div className="text-lg font-bold">Add Student</div>
-                      <button
-                        type="button"
-                        className="text-white-dark hover:text-dark"
-                        onClick={() => setModal1(false)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="p-5">
-                      <Formik
-                        initialValues={{
-                          fullName: "",
-                          email: "",
-                          phone: "",
-                          course: "",
-                          dob: "",
-                          startDate: "",
-                          age: "",
-                          country: "",
-                          city: "",
-                          pincode: "",
-                          status: "",
-                        }}
-                        validationSchema={AddstudentForm}
-                        onSubmit={(values) => {
-                          console.log("Form Addstudent:", values);
-                          setIsAddstudent(true); // Mark as Addstudent
-                          setModal1(false); // Close modal after submission
-                        }}
-                      >
-                        {({ errors, touched }) => (
-                          <Form className="space-y-5">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                              <div
-                                className={
-                                  touched.fullName && errors.fullName
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="fullName">Full Name</label>
-                                <Field
-                                  name="fullName"
-                                  type="text"
-                                  id="fullName"
-                                  placeholder="Enter Full Name"
-                                  className="form-input"
-                                />
-                                {touched.fullName && errors.fullName && (
-                                  <div className="text-danger mt-1">
-                                    {errors.fullName}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.email && errors.email
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="email">Email</label>
-                                <Field
-                                  name="email"
-                                  type="email"
-                                  id="email"
-                                  placeholder="Enter Email"
-                                  className="form-input"
-                                />
-                                {touched.email && errors.email && (
-                                  <div className="text-danger mt-1">
-                                    {errors.email}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.phone && errors.phone
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="phone">Phone Number</label>
-                                <Field
-                                  name="phone"
-                                  type="text"
-                                  id="phone"
-                                  placeholder="Enter Phone Number"
-                                  className="form-input"
-                                />
-                                {touched.phone && errors.phone && (
-                                  <div className="text-danger mt-1">
-                                    {errors.phone}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.course && errors.course
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="course">Course</label>
-                                <Field
-                                  name="course"
-                                  as="select"
-                                  id="course"
-                                  className="form-input"
-                                >
-                                  <option value="">Select a Course</option>
-                                  <option value="frontend">
-                                    Frontend Development
-                                  </option>
-                                  <option value="backend">
-                                    Backend Development
-                                  </option>
-                                  <option value="fullstack">
-                                    Fullstack Development
-                                  </option>
-                                </Field>
-                                {touched.course && errors.course && (
-                                  <div className="text-danger mt-1">
-                                    {errors.course}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.dob && errors.dob
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="dob">Date of Birth</label>
-                                <Field
-                                  name="dob"
-                                  type="date"
-                                  id="dob"
-                                  className="form-input"
-                                />
-                                {touched.dob && errors.dob && (
-                                  <div className="text-danger mt-1">
-                                    {errors.dob}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.startDate && errors.startDate
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="startDate">Start Date</label>
-                                <Field
-                                  name="startDate"
-                                  type="date"
-                                  id="startDate"
-                                  className="form-input"
-                                />
-                                {touched.startDate && errors.startDate && (
-                                  <div className="text-danger mt-1">
-                                    {errors.startDate}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.age && errors.age
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="age">Age</label>
-                                <Field
-                                  name="age"
-                                  type="number"
-                                  id="age"
-                                  placeholder="Enter Age"
-                                  className="form-input"
-                                />
-                                {touched.age && errors.age && (
-                                  <div className="text-danger mt-1">
-                                    {errors.age}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.country && errors.country
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="country">Country</label>
-                                <Field
-                                  name="country"
-                                  type="text"
-                                  id="country"
-                                  placeholder="Enter Country"
-                                  className="form-input"
-                                />
-                                {touched.country && errors.country && (
-                                  <div className="text-danger mt-1">
-                                    {errors.country}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.city && errors.city
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="city">City</label>
-                                <Field
-                                  name="city"
-                                  type="text"
-                                  id="city"
-                                  placeholder="Enter City"
-                                  className="form-input"
-                                />
-                                {touched.city && errors.city && (
-                                  <div className="text-danger mt-1">
-                                    {errors.city}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.pincode && errors.pincode
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="pincode">Pincode</label>
-                                <Field
-                                  name="pincode"
-                                  type="text"
-                                  id="pincode"
-                                  placeholder="Enter Pincode"
-                                  className="form-input"
-                                />
-                                {touched.pincode && errors.pincode && (
-                                  <div className="text-danger mt-1">
-                                    {errors.pincode}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.status && errors.status
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="status">Status</label>
-                                <Field
-                                  name="status"
-                                  as="select"
-                                  id="status"
-                                  className="form-input"
-                                >
-                                  <option value="">Select Status</option>
-                                  <option value="completed">Completed</option>
-                                  <option value="in-progress">
-                                    In Progress
-                                  </option>
-                                </Field>
-                                {touched.status && errors.status && (
-                                  <div className="text-danger mt-1">
-                                    {errors.status}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            {/* Combined Save/Submit Button */}
-                            <button
-                              type="submit"
-                              className="btn btn-primary !mt-6 ltr:ml-4 rtl:mr-4"
-                            >
-                              {isAddstudent ? "Save" : "Submit Form"}
-                            </button>
-                          </Form>
+                  {({ errors, touched }) => (
+                    <Form className="space-y-5">
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                       <div>
+                        <label htmlFor="fullName">Full Name</label>
+                        <Field name="fullName" type="text" className="form-input" />
+                        {touched.fullName && errors.fullName && (
+                          <div className="text-danger">{errors.fullName}</div>
                         )}
-                      </Formik>
-
-                      <div className="mt-8 flex items-center justify-end">
-                        <button
-                          type="button"
-                          className="btn btn-outline-danger"
-                          onClick={() => setModal1(false)}
-                        >
-                          Discard
-                        </button>
                       </div>
-                    </div>
-                  </Dialog.Panel>
-                </Transition.Child>
-              </div>
-            </div>
-          </Dialog>
-        </Transition>
-
-        <Transition appear show={modal2} as={Fragment}>
-          <Dialog as="div" open={modal2} onClose={() => setModal2(false)}>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0" />
-            </Transition.Child>
-            <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
-              <div className="flex min-h-screen items-start justify-center px-4">
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
-                >
-                  <Dialog.Panel
-                    as="div"
-                    className="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark"
-                  >
-                    <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
-                      <div className="text-lg font-bold">Edit Student</div>
-                      <button
-                        type="button"
-                        className="text-white-dark hover:text-dark"
-                        onClick={() => setModal2(false)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="p-5">
-                      <Formik
-                        initialValues={{
-                          fullName: "",
-                          email: "",
-                          phone: "",
-                          course: "",
-                          dob: "",
-                          startDate: "",
-                          age: "",
-                          country: "",
-                          city: "",
-                          pincode: "",
-                          status: "",
-                        }}
-                        validationSchema={EditstudentForm}
-                        onSubmit={(values) => {
-                          console.log("Form Editstudent:", values);
-                          setIsEditstudent(true); // Mark as Editstudent
-                          setModal1(false); // Close modal after submission
-                        }}
-                      >
-                        {({ errors, touched }) => (
-                          <Form className="space-y-5">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                              <div
-                                className={
-                                  touched.fullName && errors.fullName
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="fullName">Full Name</label>
-                                <Field
-                                  name="fullName"
-                                  type="text"
-                                  id="fullName"
-                                  placeholder="Enter Full Name"
-                                  className="form-input"
-                                />
-                                {touched.fullName && errors.fullName && (
-                                  <div className="text-danger mt-1">
-                                    {errors.fullName}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.email && errors.email
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="email">Email</label>
-                                <Field
-                                  name="email"
-                                  type="email"
-                                  id="email"
-                                  placeholder="Enter Email"
-                                  className="form-input"
-                                />
-                                {touched.email && errors.email && (
-                                  <div className="text-danger mt-1">
-                                    {errors.email}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.phone && errors.phone
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="phone">Phone Number</label>
-                                <Field
-                                  name="phone"
-                                  type="text"
-                                  id="phone"
-                                  placeholder="Enter Phone Number"
-                                  className="form-input"
-                                />
-                                {touched.phone && errors.phone && (
-                                  <div className="text-danger mt-1">
-                                    {errors.phone}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.course && errors.course
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="course">Course</label>
-                                <Field
-                                  name="course"
-                                  as="select"
-                                  id="course"
-                                  className="form-input"
-                                >
-                                  <option value="">Select a Course</option>
-                                  <option value="frontend">
-                                    Frontend Development
-                                  </option>
-                                  <option value="backend">
-                                    Backend Development
-                                  </option>
-                                  <option value="fullstack">
-                                    Fullstack Development
-                                  </option>
-                                </Field>
-                                {touched.course && errors.course && (
-                                  <div className="text-danger mt-1">
-                                    {errors.course}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.dob && errors.dob
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="dob">Date of Birth</label>
-                                <Field
-                                  name="dob"
-                                  type="date"
-                                  id="dob"
-                                  className="form-input"
-                                />
-                                {touched.dob && errors.dob && (
-                                  <div className="text-danger mt-1">
-                                    {errors.dob}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.startDate && errors.startDate
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="startDate">Start Date</label>
-                                <Field
-                                  name="startDate"
-                                  type="date"
-                                  id="startDate"
-                                  className="form-input"
-                                />
-                                {touched.startDate && errors.startDate && (
-                                  <div className="text-danger mt-1">
-                                    {errors.startDate}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.age && errors.age
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="age">Age</label>
-                                <Field
-                                  name="age"
-                                  type="number"
-                                  id="age"
-                                  placeholder="Enter Age"
-                                  className="form-input"
-                                />
-                                {touched.age && errors.age && (
-                                  <div className="text-danger mt-1">
-                                    {errors.age}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.country && errors.country
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="country">Country</label>
-                                <Field
-                                  name="country"
-                                  type="text"
-                                  id="country"
-                                  placeholder="Enter Country"
-                                  className="form-input"
-                                />
-                                {touched.country && errors.country && (
-                                  <div className="text-danger mt-1">
-                                    {errors.country}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.city && errors.city
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="city">City</label>
-                                <Field
-                                  name="city"
-                                  type="text"
-                                  id="city"
-                                  placeholder="Enter City"
-                                  className="form-input"
-                                />
-                                {touched.city && errors.city && (
-                                  <div className="text-danger mt-1">
-                                    {errors.city}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.pincode && errors.pincode
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="pincode">Pincode</label>
-                                <Field
-                                  name="pincode"
-                                  type="text"
-                                  id="pincode"
-                                  placeholder="Enter Pincode"
-                                  className="form-input"
-                                />
-                                {touched.pincode && errors.pincode && (
-                                  <div className="text-danger mt-1">
-                                    {errors.pincode}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.status && errors.status
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="status">Status</label>
-                                <Field
-                                  name="status"
-                                  as="select"
-                                  id="status"
-                                  className="form-input"
-                                >
-                                  <option value="">Select Status</option>
-                                  <option value="completed">Completed</option>
-                                  <option value="in-progress">
-                                    In Progress
-                                  </option>
-                                </Field>
-                                {touched.status && errors.status && (
-                                  <div className="text-danger mt-1">
-                                    {errors.status}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            {/* Combined Save/Submit Button */}
-                            <button
-                              type="submit"
-                              className="btn btn-primary !mt-6 ltr:ml-4 rtl:mr-4"
-                            >
-                              {isEditstudent ? "Save" : "Submit Form"}
-                            </button>
-                          </Form>
+                      <div>
+                        <label htmlFor="email">Email</label>
+                        <Field name="email" type="email" className="form-input" />
+                        {touched.email && errors.email && (
+                          <div className="text-danger">{errors.email}</div>
                         )}
-                      </Formik>
-
-                      <div className="mt-8 flex items-center justify-end">
-                        <button
-                          type="button"
-                          className="btn btn-outline-danger"
-                          onClick={() => setModal2(false)}
-                        >
-                          Discard
-                        </button>
-                        {/* <button
-                          type="button"
-                          className="btn btn-primary ltr:ml-4 rtl:mr-4"
-                          onClick={() => setModal2(false)}
-                        >
-                          Save
-                        </button> */}
                       </div>
-                    </div>
-                  </Dialog.Panel>
-                </Transition.Child>
-              </div>
+                      <div>
+                        <label htmlFor="phone">Phone</label>
+                        <Field name="phone" type="text" className="form-input" />
+                        {touched.phone && errors.phone && (
+                          <div className="text-danger">{errors.phone}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="dob">Date of Birth</label>
+                        <Field name="dob" type="date" className="form-input" />
+                        {touched.dob && errors.dob && (
+                          <div className="text-danger">{errors.dob}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="course">Course</label>
+                        <Field name="course" as="select" className="form-input">
+                          <option value="">Select a course</option>
+                          <option value="Frontend">Frontend Development</option>
+                          <option value="Backend">Backend Development</option>
+                        </Field>
+                        {touched.course && errors.course && (
+                          <div className="text-danger">{errors.course}</div>
+                        )}
+                      </div>
+                       </div>
+                     
+                      <button type="submit" className="btn btn-primary">
+                        Add Student
+                      </button>
+                    </Form>
+                  )}
+                </Formik>
+              </Dialog.Panel>
             </div>
-          </Dialog>
-        </Transition>
+          </div>
+        </Dialog>
+      </Transition>
+
+
       </div>
       <div className="panel">
         <div className="flex md:items-center justify-between md:flex-row flex-col mb-4.5 gap-5">
@@ -1726,7 +528,7 @@ const Studentlistold = () => {
             <button
               type="button"
               className="btn btn-primary"
-              onClick={() => setModal1(true)}
+              onClick={() => setIsAddStudentModalOpen(true)}
             >
               Add Student
             </button>
@@ -1739,7 +541,7 @@ const Studentlistold = () => {
             records={recordsData}
             columns={[
               { accessor: "id", title: "#", sortable: true },
-              { accessor: "firstName", sortable: true },
+              { accessor: "fullName", sortable: true },
               // { accessor: 'lastName', sortable: true },
               { accessor: "course", title: "Course", sortable: true },
               // { accessor: 'age', title: 'Age', sortable: true },

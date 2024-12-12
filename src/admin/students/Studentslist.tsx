@@ -37,41 +37,51 @@ const Studentlist = () => {
   const [pageSize, setPageSize] = useState(10); // Page size state
   const [currentPage, setCurrentPage] = useState(1); // Current page state
 
-  const handleAddStudent = (values, { resetForm }) => {
+  interface Student {
+    id?: number;
+    fullName: string;
+    email: string;
+    phone: string;
+    dob: string;
+    course: string;
+  }
+  
+  const handleAddStudent = (values: Student, { resetForm }: { resetForm: () => void }) => {
     const newStudent = {
       ...values,
       id: studentData.length + 1,
     };
-
+  
     setStudentData((prev) => [...prev, newStudent]);
-
+  
     Swal.fire({
       icon: "success",
       title: "Student added successfully",
       timer: 3000,
     });
-
+  
     resetForm();
     setIsAddStudentModalOpen(false);
   };
-
-  const handleEditStudent = (values, { resetForm }) => {
+  
+  const handleEditStudent = (values: Student, { resetForm }: { resetForm: () => void }) => {
     setStudentData((prev) =>
-      prev.map((student) => (student.id === editStudent.id ? { ...editStudent, ...values } : student))
+      prev.map((student) => (student.id === editStudent?.id ? { ...editStudent, ...values } : student))
     );
-
+  
     Swal.fire({
       icon: "success",
       title: "Student updated successfully",
       timer: 3000,
     });
-
+  
     resetForm();
     setEditStudent(null);
     setIsEditStudentModalOpen(false);
   };
+  
 
-  const handleDeleteStudent = (id) => {
+  const handleDeleteStudent = (id: number) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -119,6 +129,7 @@ const Studentlist = () => {
     doc.autoTable({ head: [tableColumn], body: tableRows });
     doc.save("students.pdf");
   };
+  
 
   const printTableData = () => {
     const printContents = document.getElementById("printableTable").innerHTML;
