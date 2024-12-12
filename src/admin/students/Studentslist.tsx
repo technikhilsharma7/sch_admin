@@ -7,6 +7,9 @@ import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import sortBy from "lodash/sortBy";
 import Papa from "papaparse";
 import jsPDF from "jspdf";
+import "jspdf-autotable";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 
 const AddStudentFormSchema = Yup.object().shape({
   fullName: Yup.string().required("Full Name is required").min(3, "Full Name must be at least 3 characters"),
@@ -117,6 +120,40 @@ const Studentlist = () => {
     doc.save("students.pdf");
   };
 
+  const printTableData = () => {
+    const printContents = document.getElementById("printableTable").innerHTML;
+    const printWindow = window.open("", "_blank");
+    printWindow.document.open();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Student List</title>
+          <style>
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              border: 1px solid black;
+              padding: 8px;
+              text-align: left;
+            }
+            th {
+              background-color: #f4f4f4;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Student List</h1>
+          ${printContents}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+  
+
   const filteredData = studentData.filter((student) =>
     Object.values(student)
       .join(" ")
@@ -170,9 +207,9 @@ const Studentlist = () => {
                 />
               </svg>
               CSV
-            </button>
+      </button>
             
-            <button
+      <button
               type="button"
               onClick={exportToPDF}
               className="btn btn-primary btn-sm m-1"
@@ -211,8 +248,74 @@ const Studentlist = () => {
                 />
               </svg>
               PDF
-            </button>
-         
+      </button>
+      <button
+              type="button"
+              onClick={printTableData}
+              className="btn btn-primary btn-sm m-1"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 ltr:mr-2 rtl:ml-2"
+              >
+                <path
+                  d="M6 17.9827C4.44655 17.9359 3.51998 17.7626 2.87868 17.1213C2 16.2426 2 14.8284 2 12C2 9.17157 2 7.75736 2.87868 6.87868C3.75736 6 5.17157 6 8 6H16C18.8284 6 20.2426 6 21.1213 6.87868C22 7.75736 22 9.17157 22 12C22 14.8284 22 16.2426 21.1213 17.1213C20.48 17.7626 19.5535 17.9359 18 17.9827"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <path
+                  opacity="0.5"
+                  d="M9 10H6"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M19 14L5 14"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M18 14V16C18 18.8284 18 20.2426 17.1213 21.1213C16.2426 22 14.8284 22 12 22C9.17157 22 7.75736 22 6.87868 21.1213C6 20.2426 6 18.8284 6 16V14"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  opacity="0.5"
+                  d="M17.9827 6C17.9359 4.44655 17.7626 3.51998 17.1213 2.87868C16.2427 2 14.8284 2 12 2C9.17158 2 7.75737 2 6.87869 2.87868C6.23739 3.51998 6.06414 4.44655 6.01733 6"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <circle
+                  opacity="0.5"
+                  cx="17"
+                  cy="10"
+                  r="1"
+                  fill="currentColor"
+                />
+                <path
+                  opacity="0.5"
+                  d="M15 16.5H9"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  opacity="0.5"
+                  d="M13 19H9"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+              PRINT
+      </button>
           
         </div>
         <input
@@ -224,9 +327,11 @@ const Studentlist = () => {
         />
         <button className="btn btn-primary" onClick={() => setIsAddStudentModalOpen(true)}>
             Add Student
-          </button>
+        </button>
+          
       </div>
 
+      <div id="printableTable">
       <DataTable
         highlightOnHover
         records={paginatedData}
@@ -241,46 +346,105 @@ const Studentlist = () => {
             accessor: "actions",
             title: "Actions",
             render: (record) => (
-              <div className="flex gap-2">
-                <button
-                  className="btn btn-sm btn-warning"
-                  onClick={() => {
-                    setEditStudent(record);
-                    setIsEditStudentModalOpen(true);
-                  }}
-                >
-                  Edit
-                </button>
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={() => handleDeleteStudent(record.id)}
-                >
-                  Delete
-                </button>
+              <div className="flex items-center w-max mx-auto gap-2">
+                <Tippy content="Edit">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5"
+                    onClick={() => {
+                      setEditStudent(record);
+                      setIsEditStudentModalOpen(true);
+                    }}
+                  >
+                    <path
+                      d="M15.2869 3.15178L14.3601 4.07866L5.83882 12.5999L5.83881 12.5999C5.26166 13.1771 4.97308 13.4656 4.7249 13.7838C4.43213 14.1592 4.18114 14.5653 3.97634 14.995C3.80273 15.3593 3.67368 15.7465 3.41556 16.5208L2.32181 19.8021L2.05445 20.6042C1.92743 20.9852 2.0266 21.4053 2.31063 21.6894C2.59466 21.9734 3.01478 22.0726 3.39584 21.9456L4.19792 21.6782L7.47918 20.5844L7.47919 20.5844C8.25353 20.3263 8.6407 20.1973 9.00498 20.0237C9.43469 19.8189 9.84082 19.5679 10.2162 19.2751C10.5344 19.0269 10.8229 18.7383 11.4001 18.1612L11.4001 18.1612L19.9213 9.63993L20.8482 8.71306C22.3839 7.17735 22.3839 4.68748 20.8482 3.15178C19.3125 1.61607 16.8226 1.61607 15.2869 3.15178Z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    />
+                    <path
+                      opacity="0.5"
+                      d="M14.36 4.07812C14.36 4.07812 14.4759 6.04774 16.2138 7.78564C17.9517 9.52354 19.9213 9.6394 19.9213 9.6394M4.19789 21.6777L2.32178 19.8015"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    />
+                  </svg>
+                </Tippy>
+
+                <Tippy content="Delete">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5"
+                    onClick={() => handleDeleteStudent(record.id)}
+                  >
+                    <path
+                      opacity="0.5"
+                      d="M9.17065 4C9.58249 2.83481 10.6937 2 11.9999 2C13.3062 2 14.4174 2.83481 14.8292 4"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M20.5001 6H3.5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      opacity="0.5"
+                      d="M9.5 11L10 16"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      opacity="0.5"
+                      d="M14.5 11L14 16"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </Tippy>
               </div>
             ),
           },
         ]}
         pagination
       />
+      </div>
+      
 
       <div className="flex justify-between items-center bg-white p-2">
 
       <div className="flex  items-center">
-        <span>Show </span>
+        <span>Showing </span>
         <select
           className="form-select mx-2"
           value={pageSize}
-          onChange={(e) => setPageSize(Number(e.target.value))}
+          onChange={(e) => setPageSize (Number(e.target.value))}
         >
-          <option value={10}>10</option>
-          <option value={25}>25</option>
-          <option value={50}>50</option>
-          <option value={100}>100</option>
+          <option value={10}>10 </option>
+          <option value={25}>25 </option>
+          <option value={50}>50 </option>
+          <option value={100}>100 </option>
         </select>
         <span>entries</span>
       </div>
-      <div className="flex items-center">
+<div className="flex items-center">
   <button
     className="btn btn-icon btn-primary rounded-full p-2"
     disabled={currentPage === 1}
@@ -298,7 +462,22 @@ const Studentlist = () => {
     </svg>
   </button>
 
-  <div className="flex gap-2">{paginationItems}</div>
+  <div className="flex gap-2 rounded-full bg-gray-100 p-2">
+  {paginationItems.map((item, index) => (
+    <div key={index} className="flex">
+      <button
+        className={`px-3 py-1 rounded-full ${
+          currentPage === index + 1
+            ? "bg-blue-500 text-white"
+            : "bg-gray-200 text-black"
+        }`}
+        onClick={() => setCurrentPage(index + 1)}
+      >
+        {item.props.children}
+      </button>
+    </div>
+  ))}
+</div>
 
   <button
     className="btn btn-icon btn-primary rounded-full p-2"
