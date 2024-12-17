@@ -15,9 +15,9 @@ const defaultState = {
     sidebar: false,
     pageTitle: '',
     languageList: [
-        
+
         { code: 'en', name: 'English' },
-        
+
     ],
     semidark: false,
 };
@@ -121,7 +121,7 @@ const themeConfigSlice = createSlice({
         },
 
         setPageTitle(state, { payload }) {
-            document.title = `${payload} | VRISTO - Multipurpose Tailwind Dashboard Template`;
+            document.title = `${payload} | Admin`;
         },
     },
 });

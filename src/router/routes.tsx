@@ -2,10 +2,10 @@ import { lazy } from 'react';
 import FormToTable from '../admin/FormToTable';
 import Studentlistold from '../admin/students/Studentslistold';
 
+const LoginBoxed = lazy(() => import('../pages/Authentication/LoginBoxed'));
 const Index = lazy(() => import('../admin/Dashboard'));
-const Studentslist = lazy(() => import('../admin/students/Studentslist'));
-const Login = lazy(() => import('../admin/user/Login'));
-const Signup = lazy(() => import('../admin/user/Signup'));
+const Studentslist = lazy(() => import('../admin/students/Studentslist'));  
+const Signup = lazy(() => import('../admin/user/Signup'));  
 const Analytics = lazy(() => import('../pages/Analytics'));
 const Finance = lazy(() => import('../pages/Finance'));
 const Crypto = lazy(() => import('../pages/Crypto'));
@@ -77,11 +77,10 @@ const ERROR404 = lazy(() => import('../pages/Pages/Error404'));
 const ERROR500 = lazy(() => import('../pages/Pages/Error500'));
 const ERROR503 = lazy(() => import('../pages/Pages/Error503'));
 const Maintenence = lazy(() => import('../pages/Pages/Maintenence'));
-const LoginBoxed = lazy(() => import('../pages/Authentication/LoginBoxed'));
+
 const RegisterBoxed = lazy(() => import('../pages/Authentication/RegisterBoxed'));
 const UnlockBoxed = lazy(() => import('../pages/Authentication/UnlockBox'));
 const RecoverIdBoxed = lazy(() => import('../pages/Authentication/RecoverIdBox'));
-const LoginCover = lazy(() => import('../pages/Authentication/LoginCover'));
 const RegisterCover = lazy(() => import('../pages/Authentication/RegisterCover'));
 const RecoverIdCover = lazy(() => import('../pages/Authentication/RecoverIdCover'));
 const UnlockCover = lazy(() => import('../pages/Authentication/UnlockCover'));
@@ -107,11 +106,11 @@ const Clipboard = lazy(() => import('../pages/Forms/Clipboard'));
 const routes = [
     // dashboard
     {
-        path:'formtotable',
-        element: <FormToTable/>
+        path: 'formtotable',
+        element: <FormToTable />
     },
     {
-        path:'studentlistold',
+        path: 'studentlistold',
         element: <Studentlistold />
     },
     {
@@ -123,11 +122,7 @@ const routes = [
         element: <Studentslist />,
     },
     {
-        path:'/user/login',
-        element:<Login />,
-    },
-    {
-        path:'/user/signup',
+        path: '/user/signup',
         element: <Signup />,
     },
     // {
@@ -446,7 +441,7 @@ const routes = [
     },
     //Authentication
     {
-        path: '/auth/boxed-signin',
+        path: '/auth/login',
         element: <LoginBoxed />,
         layout: 'blank',
     },
@@ -465,12 +460,6 @@ const routes = [
         element: <RecoverIdBoxed />,
         layout: 'blank',
     },
-    {
-        path: '/auth/cover-login',
-        element: <LoginCover />,
-        layout: 'blank',
-    },
-
     {
         path: '/auth/cover-register',
         element: <RegisterCover />,

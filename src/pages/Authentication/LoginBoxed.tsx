@@ -1,21 +1,32 @@
 import { Link, useNavigate } from 'react-router-dom';
+import React, { FormEvent,useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
-import { useEffect } from 'react';
+// import {loginRequest} from '../../backend/apis/login';
+
 import { setPageTitle } from '../../store/themeConfigSlice';
 
 const LoginBoxed = () => {
+    
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(setPageTitle('Login Boxed'));
+        dispatch(setPageTitle('Login'));
     });
     const navigate = useNavigate();
     const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === 'dark' ? true : false;
 
-    const submitForm = () => {
-        navigate('/');
+    const submitForm = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const username = e.currentTarget.username.value;
+        const password = e.currentTarget.password.value;
+        console.log(username);
+        console.log(password);
         
-    };
+    // const response = await loginRequest(brandAndBread, page, search, showEmptyFields, selectedLangArray);
+
+
+    }
+
     
     return (
         <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-[url('/assets/images/map.svg')] dark:bg-[url('/assets/images/map-dark.svg')]">
@@ -25,12 +36,12 @@ const LoginBoxed = () => {
                 <p className="mb-7">Enter your email and password to login</p>
                 <form className="space-y-5" onSubmit={submitForm}>
                     <div>
-                        <label htmlFor="email">Email</label>
-                        <input id="email" type="email" className="form-input" placeholder="Enter Email" />
+                        <label htmlFor="User">Username</label>
+                        <input id="User" type="text" name='username' className="form-input" placeholder="Enter User" />
                     </div>
                     <div>
                         <label htmlFor="password">Password</label>
-                        <input id="password" type="password" className="form-input" placeholder="Enter Password" />
+                        <input id="password" type="password" name='password' className="form-input" placeholder="Enter Password" />
                     </div>
                     <div>
                         <label className="cursor-pointer">
@@ -39,7 +50,7 @@ const LoginBoxed = () => {
                         </label>
                     </div>
                     
-                    <button type="submit" className="btn btn-primary w-full">
+                    <button  type="submit" className="btn btn-primary w-full">
                         SIGN IN
                     </button>
                 </form>
