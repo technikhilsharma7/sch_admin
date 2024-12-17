@@ -1,1586 +1,201 @@
-import { DataTable, DataTableSortStatus } from "mantine-datatable";
-import { useState, Fragment, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+import Swal from "sweetalert2";
+import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import sortBy from "lodash/sortBy";
-import { downloadExcel } from "react-export-table-to-excel";
-import { useDispatch } from "react-redux";
-import { setPageTitle } from "../../store/themeConfigSlice";
+import Papa from "papaparse";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
-import { NavLink } from "react-router-dom";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css";
-import * as Yup from "yup";
-import { Field, Form, Formik } from "formik";
-import Swal from "sweetalert2";
 
-const rowData = [
-  {
-    id: 1,
-    firstName: "Caroline",
-    lastName: "Jensen",
-    email: "carolinejensen@zidant.com",
-    dob: "2004-05-28",
-    // address: {
-    //     street: '529 Scholes Street',
-    //     city: 'Temperanceville',
-    //     zipcode: 5235,
-    //     geo: {
-    //         lat: 23.806115,
-    //         lng: 164.677197,
-    //     },
-    // },
-    phone: "+1 (821) 447-3782",
-    isActive: true,
-    age: 39,
-    course: "POLARAX",
-  },
-  {
-    id: 2,
-    firstName: "Celeste",
-    lastName: "Grant",
-    email: "celestegrant@polarax.com",
-    dob: "1989-11-19",
-    // address: {
-    //     street: '639 Kimball Street',
-    //     city: 'Bascom',
-    //     zipcode: 8907,
-    //     geo: {
-    //         lat: 65.954483,
-    //         lng: 98.906478,
-    //     },
-    // },
-    phone: "+1 (838) 515-3408",
-    isActive: false,
-    age: 32,
-    course: "MANGLO",
-  },
-  {
-    id: 3,
-    firstName: "Tillman",
-    lastName: "Forbes",
-    email: "tillmanforbes@manglo.com",
-    dob: "2016-09-05",
-    // address: {
-    //     street: '240 Vandalia Avenue',
-    //     city: 'Thynedale',
-    //     zipcode: 8994,
-    //     geo: {
-    //         lat: -34.949388,
-    //         lng: -82.958111,
-    //     },
-    // },
-    phone: "+1 (969) 496-2892",
-    isActive: false,
-    age: 26,
-    course: "APPLIDECK",
-  },
-  {
-    id: 4,
-    firstName: "Daisy",
-    lastName: "Whitley",
-    email: "daisywhitley@applideck.com",
-    dob: "1987-03-23",
-    // address: {
-    //     street: '350 Pleasant Place',
-    //     city: 'Idledale',
-    //     zipcode: 9369,
-    //     geo: {
-    //         lat: -54.458809,
-    //         lng: -127.476556,
-    //     },
-    // },
-    phone: "+1 (861) 564-2877",
-    isActive: true,
-    age: 21,
-    course: "VOLAX",
-  },
-  {
-    id: 5,
-    firstName: "Weber",
-    lastName: "Bowman",
-    email: "weberbowman@volax.com",
-    dob: "1983-02-24",
-    // address: {
-    //     street: '154 Conway Street',
-    //     city: 'Broadlands',
-    //     zipcode: 8131,
-    //     geo: {
-    //         lat: 54.501351,
-    //         lng: -167.47138,
-    //     },
-    // },
-    phone: "+1 (962) 466-3483",
-    isActive: false,
-    age: 26,
-    course: "ORBAXTER",
-  },
-  {
-    id: 6,
-    firstName: "Buckley",
-    lastName: "Townsend",
-    email: "buckleytownsend@orbaxter.com",
-    dob: "2011-05-29",
-    // address: {
-    //     street: '131 Guernsey Street',
-    //     city: 'Vallonia',
-    //     zipcode: 6779,
-    //     geo: {
-    //         lat: -2.681655,
-    //         lng: 3.528942,
-    //     },
-    // },
-    phone: "+1 (884) 595-2643",
-    isActive: true,
-    age: 40,
-    course: "OPPORTECH",
-  },
-  {
-    id: 7,
-    firstName: "Latoya",
-    lastName: "Bradshaw",
-    email: "latoyabradshaw@opportech.com",
-    dob: "2010-11-23",
-    // address: {
-    //     street: '668 Lenox Road',
-    //     city: 'Lowgap',
-    //     zipcode: 992,
-    //     geo: {
-    //         lat: 36.026423,
-    //         lng: 130.412198,
-    //     },
-    // },
-    phone: "+1 (906) 474-3155",
-    isActive: true,
-    age: 24,
-    course: "GORGANIC",
-  },
-  {
-    id: 8,
-    firstName: "Kate",
-    lastName: "Lindsay",
-    email: "katelindsay@gorganic.com",
-    dob: "1987-07-02",
-    // address: {
-    //     street: '773 Harrison Avenue',
-    //     city: 'Carlton',
-    //     zipcode: 5909,
-    //     geo: {
-    //         lat: 42.464724,
-    //         lng: -12.948403,
-    //     },
-    // },
-    phone: "+1 (930) 546-2952",
-    isActive: true,
-    age: 24,
-    course: "AVIT",
-  },
-  {
-    id: 9,
-    firstName: "Marva",
-    lastName: "Sandoval",
-    email: "marvasandoval@avit.com",
-    dob: "2010-11-02",
-    // address: {
-    //     street: '200 Malta Street',
-    //     city: 'Tuskahoma',
-    //     zipcode: 1292,
-    //     geo: {
-    //         lat: -52.206169,
-    //         lng: 74.19452,
-    //     },
-    // },
-    phone: "+1 (927) 566-3600",
-    isActive: false,
-    age: 28,
-    course: "QUILCH",
-  },
-  {
-    id: 10,
-    firstName: "Decker",
-    lastName: "Russell",
-    email: "deckerrussell@quilch.com",
-    dob: "1994-04-21",
-    // address: {
-    //     street: '708 Bath Avenue',
-    //     city: 'Coultervillle',
-    //     zipcode: 1268,
-    //     geo: {
-    //         lat: -41.550295,
-    //         lng: -146.598075,
-    //     },
-    // },
-    phone: "+1 (846) 535-3283",
-    isActive: false,
-    age: 27,
-    course: "MEMORA",
-  },
-  {
-    id: 11,
-    firstName: "Odom",
-    lastName: "Mills",
-    email: "odommills@memora.com",
-    dob: "2010-01-24",
-    // address: {
-    //     street: '907 Blake Avenue',
-    //     city: 'Churchill',
-    //     zipcode: 4400,
-    //     geo: {
-    //         lat: -56.061694,
-    //         lng: -130.238523,
-    //     },
-    // },
-    phone: "+1 (995) 525-3402",
-    isActive: true,
-    age: 34,
-    course: "ZORROMOP",
-  },
-  {
-    id: 12,
-    firstName: "Sellers",
-    lastName: "Walters",
-    email: "sellerswalters@zorromop.com",
-    dob: "1975-11-12",
-    // address: {
-    //     street: '978 Oakland Place',
-    //     city: 'Gloucester',
-    //     zipcode: 3802,
-    //     geo: {
-    //         lat: 11.732587,
-    //         lng: 96.118099,
-    //     },
-    // },
-    phone: "+1 (830) 430-3157",
-    isActive: true,
-    age: 28,
-    course: "ORBOID",
-  },
-  {
-    id: 13,
-    firstName: "Wendi",
-    lastName: "Powers",
-    email: "wendipowers@orboid.com",
-    dob: "1979-06-02",
-    // address: {
-    //     street: '376 Greenpoint Avenue',
-    //     city: 'Elliott',
-    //     zipcode: 9149,
-    //     geo: {
-    //         lat: -78.159578,
-    //         lng: -9.835103,
-    //     },
-    // },
-    phone: "+1 (863) 457-2088",
-    isActive: true,
-    age: 31,
-    course: "SNORUS",
-  },
-  {
-    id: 14,
-    firstName: "Sophie",
-    lastName: "Horn",
-    email: "sophiehorn@snorus.com",
-    dob: "2018-09-20",
-    // address: {
-    //     street: '343 Doughty Street',
-    //     city: 'Homestead',
-    //     zipcode: 330,
-    //     geo: {
-    //         lat: 65.484087,
-    //         lng: 137.413998,
-    //     },
-    // },
-    phone: "+1 (885) 418-3948",
-    isActive: true,
-    age: 22,
-    course: "XTH",
-  },
-  {
-    id: 15,
-    firstName: "Levine",
-    lastName: "Rodriquez",
-    email: "levinerodriquez@xth.com",
-    dob: "1973-02-08",
-    // address: {
-    //     street: '643 Allen Avenue',
-    //     city: 'Weedville',
-    //     zipcode: 8931,
-    //     geo: {
-    //         lat: -63.185586,
-    //         lng: 117.327808,
-    //     },
-    // },
-    phone: "+1 (999) 565-3239",
-    isActive: true,
-    age: 27,
-    course: "COMTRACT",
-  },
-  {
-    id: 16,
-    firstName: "Little",
-    lastName: "Hatfield",
-    email: "littlehatfield@comtract.com",
-    dob: "2012-01-03",
-    // address: {
-    //     street: '194 Anthony Street',
-    //     city: 'Williston',
-    //     zipcode: 7456,
-    //     geo: {
-    //         lat: 47.480837,
-    //         lng: 6.085909,
-    //     },
-    // },
-    phone: "+1 (812) 488-3011",
-    isActive: false,
-    age: 33,
-    course: "ZIDANT",
-  },
-  {
-    id: 17,
-    firstName: "Larson",
-    lastName: "Kelly",
-    email: "larsonkelly@zidant.com",
-    dob: "2010-06-14",
-    // address: {
-    //     street: '978 Indiana Place',
-    //     city: 'Innsbrook',
-    //     zipcode: 639,
-    //     geo: {
-    //         lat: -71.766732,
-    //         lng: 150.854345,
-    //     },
-    // },
-    phone: "+1 (892) 484-2162",
-    isActive: true,
-    age: 20,
-    course: "SUREPLEX",
-  },
-  {
-    id: 18,
-    firstName: "Kendra",
-    lastName: "Molina",
-    email: "kendramolina@sureplex.com",
-    dob: "2002-07-19",
-    // address: {
-    //     street: '567 Charles Place',
-    //     city: 'Kimmell',
-    //     zipcode: 1966,
-    //     geo: {
-    //         lat: 50.765816,
-    //         lng: -117.106499,
-    //     },
-    // },
-    phone: "+1 (920) 528-3330",
-    isActive: false,
-    age: 31,
-    course: "DANJA",
-  },
-  {
-    id: 19,
-    firstName: "Ebony",
-    lastName: "Livingston",
-    email: "ebonylivingston@danja.com",
-    dob: "1994-10-18",
-    // address: {
-    //     street: '284 Cass Place',
-    //     city: 'Navarre',
-    //     zipcode: 948,
-    //     geo: {
-    //         lat: 65.271256,
-    //         lng: -83.064729,
-    //     },
-    // },
-    phone: "+1 (970) 591-3039",
-    isActive: false,
-    age: 33,
-    course: "EURON",
-  },
-  {
-    id: 20,
-    firstName: "Kaufman",
-    lastName: "Rush",
-    email: "kaufmanrush@euron.com",
-    dob: "2011-07-10",
-    // address: {
-    //     street: '408 Kingsland Avenue',
-    //     city: 'Beaulieu',
-    //     zipcode: 7911,
-    //     geo: {
-    //         lat: 41.513153,
-    //         lng: 54.821641,
-    //     },
-    // },
-    phone: "+1 (924) 463-2934",
-    isActive: false,
-    age: 39,
-    course: "ILLUMITY",
-  },
-  {
-    id: 21,
-    firstName: "Frank",
-    lastName: "Hays",
-    email: "frankhays@illumity.com",
-    dob: "2005-06-15",
-    // address: {
-    //     street: '973 Caton Place',
-    //     city: 'Dargan',
-    //     zipcode: 4104,
-    //     geo: {
-    //         lat: 63.314988,
-    //         lng: -138.771323,
-    //     },
-    // },
-    phone: "+1 (930) 577-2670",
-    isActive: false,
-    age: 31,
-    course: "SYBIXTEX",
-  },
-  {
-    id: 22,
-    firstName: "Carmella",
-    lastName: "Mccarty",
-    email: "carmellamccarty@sybixtex.com",
-    dob: "1980-03-06",
-    // address: {
-    //     street: '919 Judge Street',
-    //     city: 'Canby',
-    //     zipcode: 8283,
-    //     geo: {
-    //         lat: 9.198597,
-    //         lng: -138.809971,
-    //     },
-    // },
-    phone: "+1 (876) 456-3218",
-    isActive: true,
-    age: 21,
-    course: "ZEDALIS",
-  },
-  {
-    id: 23,
-    firstName: "Massey",
-    lastName: "Owen",
-    email: "masseyowen@zedalis.com",
-    dob: "2012-03-01",
-    // address: {
-    //     street: '108 Seaview Avenue',
-    //     city: 'Slovan',
-    //     zipcode: 3599,
-    //     geo: {
-    //         lat: -74.648318,
-    //         lng: 99.620699,
-    //     },
-    // },
-    phone: "+1 (917) 567-3786",
-    isActive: false,
-    age: 40,
-    course: "DYNO",
-  },
-  {
-    id: 24,
-    firstName: "Lottie",
-    lastName: "Lowery",
-    email: "lottielowery@dyno.com",
-    dob: "1982-10-10",
-    // address: {
-    //     street: '557 Meserole Avenue',
-    //     city: 'Fowlerville',
-    //     zipcode: 4991,
-    //     geo: {
-    //         lat: 54.811546,
-    //         lng: -20.996515,
-    //     },
-    // },
-    phone: "+1 (912) 539-3498",
-    isActive: true,
-    age: 36,
-    course: "MULTIFLEX",
-  },
-  {
-    id: 25,
-    firstName: "Addie",
-    lastName: "Luna",
-    email: "addieluna@multiflex.com",
-    dob: "1988-05-01",
-    // address: {
-    //     street: '688 Bulwer Place',
-    //     city: 'Harmon',
-    //     zipcode: 7664,
-    //     geo: {
-    //         lat: -12.762766,
-    //         lng: -39.924497,
-    //     },
-    // },
-    phone: "+1 (962) 537-2981",
-    isActive: true,
-    age: 32,
-    course: "PHARMACON",
-  },
-];
-
-const col = [
-  "id",
-  "firstName",
-  "lastName",
-  "course",
-  "age",
-  "dob",
-  "email",
-  "phone",
-];
-
-const editForm = () => {
-  const toast = Swal.mixin({
-    toast: true,
-    position: "top",
-    showConfirmButton: false,
-    timer: 3000,
-  });
-  toast.fire({
-    icon: "success",
-    title: "Form Addstudent successfully",
-    padding: "10px 20px",
-  });
-};
-
-const EditstudentForm = Yup.object().shape({
-  fullName: Yup.string()
-    .required("Full Name is required")
-    .min(3, "Full Name must be at least 3 characters"),
-  email: Yup.string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
-    .required("Phone number is required"),
+const AddStudentFormSchema = Yup.object().shape({
+  fullName: Yup.string().required("Full Name is required").min(3, "Full Name must be at least 3 characters"),
+  email: Yup.string().email("Invalid email format").required("Email is required"),
+  phone: Yup.string().matches(/^[0-9]{10}$/, "Phone number must be 10 digits").required("Phone number is required"),
   course: Yup.string().required("Please select a course"),
   dob: Yup.date().required("Date of Birth is required"),
-  startDate: Yup.date().required("Start Date is required"),
-  age: Yup.number()
-    .positive("Age must be a positive number")
-    .required("Age is required"),
-  country: Yup.string().required("Country is required"),
-  city: Yup.string().required("City is required"),
-  pincode: Yup.string()
-    .matches(/^[0-9]{6}$/, "Pincode must be 6 digits")
-    .required("Pincode is required"),
-  status: Yup.string().required("Please select a status"),
-});
-
-const submitForm = () => {
-  const toast = Swal.mixin({
-    toast: true,
-    position: "top",
-    showConfirmButton: false,
-    timer: 3000,
-  });
-  toast.fire({
-    icon: "success",
-    title: "Form Addstudent successfully",
-    padding: "10px 20px",
-  });
-};
-
-const AddstudentForm = Yup.object().shape({
-  fullName: Yup.string()
-    .required("Full Name is required")
-    .min(3, "Full Name must be at least 3 characters"),
-  email: Yup.string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
-    .required("Phone number is required"),
-  course: Yup.string().required("Please select a course"),
-  dob: Yup.date().required("Date of Birth is required"),
-  startDate: Yup.date().required("Start Date is required"),
-  age: Yup.number()
-    .positive("Age must be a positive number")
-    .required("Age is required"),
-  country: Yup.string().required("Country is required"),
-  city: Yup.string().required("City is required"),
-  pincode: Yup.string()
-    .matches(/^[0-9]{6}$/, "Pincode must be 6 digits")
-    .required("Pincode is required"),
-  status: Yup.string().required("Please select a status"),
 });
 
 const Studentlistold = () => {
-  // Popup Model
-  const [isAddstudent, setIsAddstudent] = useState(false);
-  const [isEditstudent, setIsEditstudent] = useState(false);
-  const [modal1, setModal1] = useState(false);
-  const [modal2, setModal2] = useState(false);
+  const [studentData, setStudentData] = useState([
+    {
+      id: 1,
+      fullName: "Caroline Jensen",
+      email: "carolinejensen@zidant.com",
+      phone: "+1 (821) 447-3782",
+      dob: "2004-05-28",
+      course: "POLARAX",
+    },
+  ]);
+  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
+  const [isEditStudentModalOpen, setIsEditStudentModalOpen] = useState(false);
+  const [editStudent, setEditStudent] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10); // Page size state
+  const [currentPage, setCurrentPage] = useState(1); // Current page state
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(setPageTitle("Export Table"));
-  });
-  const [page, setPage] = useState(1);
-  const PAGE_SIZES = [10, 20, 30, 50, 100];
-  const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-  const [initialRecords, setInitialRecords] = useState(sortBy(rowData, "id"));
-  const [recordsData, setRecordsData] = useState(initialRecords);
-
-  const [search, setSearch] = useState("");
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-    columnAccessor: "id",
-    direction: "asc",
-  });
-
-  const randomStatus = () => {
-    const status = [
-      "PAID",
-      "APPROVED",
-      "FAILED",
-      "CANCEL",
-      "SUCCESS",
-      "PENDING",
-      "COMPLETE",
-    ];
-    const random = Math.floor(Math.random() * status.length);
-    return status[random];
-  };
-
-  const randomColor = () => {
-    const color = [
-      "primary",
-      "secondary",
-      "success",
-      "danger",
-      "warning",
-      "info",
-    ];
-    const random = Math.floor(Math.random() * color.length);
-    return color[random];
-  };
-
-  useEffect(() => {
-    setPage(1);
-  }, [pageSize]);
-
-  useEffect(() => {
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize;
-    setRecordsData([...initialRecords.slice(from, to)]);
-  }, [page, pageSize, initialRecords]);
-
-  useEffect(() => {
-    setInitialRecords(() => {
-      return rowData.filter((item: any) => {
-        return (
-          item.id.toString().includes(search.toLowerCase()) ||
-          item.firstName.toLowerCase().includes(search.toLowerCase()) ||
-          item.lastName.toLowerCase().includes(search.toLowerCase()) ||
-          item.course.toLowerCase().includes(search.toLowerCase()) ||
-          item.email.toLowerCase().includes(search.toLowerCase()) ||
-          item.age.toString().toLowerCase().includes(search.toLowerCase()) ||
-          item.dob.toLowerCase().includes(search.toLowerCase()) ||
-          item.phone.toLowerCase().includes(search.toLowerCase())
-        );
-      });
+  interface Student {
+    id?: number;
+    fullName: string;
+    email: string;
+    phone: string;
+    dob: string;
+    course: string;
+  }
+  
+  const handleAddStudent = (values: Student, { resetForm }: { resetForm: () => void }) => {
+    const newStudent = {
+      ...values,
+      id: studentData.length + 1,
+    };
+  
+    setStudentData((prev) => [...prev, newStudent]);
+  
+    Swal.fire({
+      icon: "success",
+      title: "Student added successfully",
+      timer: 3000,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
+  
+    resetForm();
+    setIsAddStudentModalOpen(false);
+  };
+  
+  const handleEditStudent = (values: Student, { resetForm }: { resetForm: () => void }) => {
+    setStudentData((prev) =>
+      prev.map((student) => (student.id === editStudent?.id ? { ...editStudent, ...values } : student))
+    );
+  
+    Swal.fire({
+      icon: "success",
+      title: "Student updated successfully",
+      timer: 3000,
+    });
+  
+    resetForm();
+    setEditStudent(null);
+    setIsEditStudentModalOpen(false);
+  };
+  
 
-  useEffect(() => {
-    const data = sortBy(initialRecords, sortStatus.columnAccessor);
-    setInitialRecords(sortStatus.direction === "desc" ? data.reverse() : data);
-    setPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortStatus]);
-  const header = [
-    "Id",
-    "Firstname",
-    "Lastname",
-    "Email",
-    "Start Date",
-    "Phone No.",
-    "Age",
-    "Course",
-  ];
-
-  const formatDate = (date: any) => {
-    if (date) {
-      const dt = new Date(date);
-      const month =
-        dt.getMonth() + 1 < 10 ? "0" + (dt.getMonth() + 1) : dt.getMonth() + 1;
-      const day = dt.getDate() < 10 ? "0" + dt.getDate() : dt.getDate();
-      return day + "/" + month + "/" + dt.getFullYear();
-    }
-    return "";
+  const handleDeleteStudent = (id: number) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setStudentData((prev) => prev.filter((student) => student.id !== id));
+        Swal.fire("Deleted!", "The student has been deleted.", "success");
+      }
+    });
   };
 
-  function handleDownloadExcel() {
-    downloadExcel({
-      fileName: "table",
-      sheet: "react-export-table-to-excel",
-      tablePayload: {
-        header,
-        body: rowData,
-      },
-    });
+  const exportToCSV = () => {
+    const csvData = studentData.map(({ id, fullName, email, phone, dob, course }) => ({ id, fullName, email, phone, dob, course }));
+    const csvContent = [
+      ["ID", "Full Name", "Email", "Phone", "Date of Birth", "Course"],
+      ...csvData.map(Object.values),
+    ]
+      .map((e) => e.join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = "students.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Student List", 10, 10);
+    const tableColumn = ["ID", "Full Name", "Email", "Phone", "Date of Birth", "Course"];
+    const tableRows = studentData.map((row) => [
+      row.id,
+      row.fullName,
+      row.email,
+      row.phone,
+      row.dob,
+      row.course,
+    ]);
+    doc.autoTable({ head: [tableColumn], body: tableRows });
+    doc.save("students.pdf");
+  };
+  
+
+  const printTableData = () => {
+    const printContents = document.getElementById("printableTable").innerHTML;
+    const printWindow = window.open("", "_blank");
+    printWindow.document.open();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Student List</title>
+          <style>
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              border: 1px solid black;
+              padding: 8px;
+              text-align: left;
+            }
+            th {
+              background-color: #f4f4f4;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Student List</h1>
+          ${printContents}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+  
+
+  const filteredData = studentData.filter((student) =>
+    Object.values(student)
+      .join(" ")
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
+
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+
+  const paginationItems = [];
+  for (let i = 1; i <= totalPages; i++) {
+    paginationItems.push(
+      <button
+        key={i}
+        className={`btn ${i === currentPage ? "btn-primary" : "btn-secondary"}`}
+        onClick={() => setCurrentPage(i)}
+      >
+        {i}
+      </button>
+    );
   }
 
-  const exportTable = (type: any) => {
-    let columns: any = col;
-    let records = rowData;
-    let filename = "table";
-
-    let newVariable: any;
-    newVariable = window.navigator;
-
-    if (type === "csv") {
-      let coldelimiter = ";";
-      let linedelimiter = "\n";
-      let result = columns
-        .map((d: any) => {
-          return capitalize(d);
-        })
-        .join(coldelimiter);
-      result += linedelimiter;
-      // eslint-disable-next-line array-callback-return
-      records.map((item: any) => {
-        // eslint-disable-next-line array-callback-return
-        columns.map((d: any, index: any) => {
-          if (index > 0) {
-            result += coldelimiter;
-          }
-          let val = item[d] ? item[d] : "";
-          result += val;
-        });
-        result += linedelimiter;
-      });
-
-      if (result == null) return;
-      if (!result.match(/^data:text\/csv/i) && !newVariable.msSaveOrOpenBlob) {
-        var data =
-          "data:application/csv;charset=utf-8," + encodeURIComponent(result);
-        var link = document.createElement("a");
-        link.setAttribute("href", data);
-        link.setAttribute("download", filename + ".csv");
-        link.click();
-      } else {
-        var blob = new Blob([result]);
-        if (newVariable.msSaveOrOpenBlob) {
-          newVariable.msSaveBlob(blob, filename + ".csv");
-        }
-      }
-    } else if (type === "print") {
-      var rowhtml = "<p>" + filename + "</p>";
-      rowhtml +=
-        '<table style="width: 100%; " cellpadding="0" cellcpacing="0"><thead><tr style="color: #515365; background: #eff5ff; -webkit-print-color-adjust: exact; print-color-adjust: exact; "> ';
-      // eslint-disable-next-line array-callback-return
-      columns.map((d: any) => {
-        rowhtml += "<th>" + capitalize(d) + "</th>";
-      });
-      rowhtml += "</tr></thead>";
-      rowhtml += "<tbody>";
-
-      // eslint-disable-next-line array-callback-return
-      records.map((item: any) => {
-        rowhtml += "<tr>";
-        // eslint-disable-next-line array-callback-return
-        columns.map((d: any) => {
-          let val = item[d] ? item[d] : "";
-          rowhtml += "<td>" + val + "</td>";
-        });
-        rowhtml += "</tr>";
-      });
-      rowhtml +=
-        "<style>body {font-family:Arial; color:#495057;}p{text-align:center;font-size:18px;font-weight:bold;margin:15px;}table{ border-collapse: collapse; border-spacing: 0; }th,td{font-size:12px;text-align:left;padding: 4px;}th{padding:8px 4px;}tr:nth-child(2n-1){background:#f7f7f7; }</style>";
-      rowhtml += "</tbody></table>";
-      var winPrint: any = window.open(
-        "",
-        "",
-        "left=0,top=0,width=1000,height=600,toolbar=0,scrollbars=0,status=0"
-      );
-      winPrint.document.write("<title>Print</title>" + rowhtml);
-      winPrint.document.close();
-      winPrint.focus();
-      winPrint.print();
-    } else if (type === "txt") {
-      let coldelimiter = ",";
-      let linedelimiter = "\n";
-      let result = columns
-        .map((d: any) => {
-          return capitalize(d);
-        })
-        .join(coldelimiter);
-      result += linedelimiter;
-      // eslint-disable-next-line array-callback-return
-      records.map((item: any) => {
-        // eslint-disable-next-line array-callback-return
-        columns.map((d: any, index: any) => {
-          if (index > 0) {
-            result += coldelimiter;
-          }
-          let val = item[d] ? item[d] : "";
-          result += val;
-        });
-        result += linedelimiter;
-      });
-
-      if (result == null) return;
-      if (!result.match(/^data:text\/txt/i) && !newVariable.msSaveOrOpenBlob) {
-        var data1 =
-          "data:application/txt;charset=utf-8," + encodeURIComponent(result);
-        var link1 = document.createElement("a");
-        link1.setAttribute("href", data1);
-        link1.setAttribute("download", filename + ".txt");
-        link1.click();
-      } else {
-        var blob1 = new Blob([result]);
-        if (newVariable.msSaveOrOpenBlob) {
-          newVariable.msSaveBlob(blob1, filename + ".txt");
-        }
-      }
-    }
-  };
-
-  const capitalize = (text: any) => {
-    return text
-      .replace("_", " ")
-      .replace("-", " ")
-      .toLowerCase()
-      .split(" ")
-      .map((s: any) => s.charAt(0).toUpperCase() + s.substring(1))
-      .join(" ");
-  };
   return (
     <div>
-      <div>
-        <Transition appear show={modal1} as={Fragment}>
-          <Dialog as="div" open={modal1} onClose={() => setModal1(false)}>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0" />
-            </Transition.Child>
-            <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
-              <div className="flex min-h-screen items-start justify-center px-4">
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
-                >
-                  <Dialog.Panel
-                    as="div"
-                    className="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark"
-                  >
-                    <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
-                      <div className="text-lg font-bold">Add Student</div>
-                      <button
-                        type="button"
-                        className="text-white-dark hover:text-dark"
-                        onClick={() => setModal1(false)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="p-5">
-                      <Formik
-                        initialValues={{
-                          fullName: "",
-                          email: "",
-                          phone: "",
-                          course: "",
-                          dob: "",
-                          startDate: "",
-                          age: "",
-                          country: "",
-                          city: "",
-                          pincode: "",
-                          status: "",
-                        }}
-                        validationSchema={AddstudentForm}
-                        onSubmit={(values) => {
-                          console.log("Form Addstudent:", values);
-                          setIsAddstudent(true); // Mark as Addstudent
-                          setModal1(false); // Close modal after submission
-                        }}
-                      >
-                        {({ errors, touched }) => (
-                          <Form className="space-y-5">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                              <div
-                                className={
-                                  touched.fullName && errors.fullName
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="fullName">Full Name</label>
-                                <Field
-                                  name="fullName"
-                                  type="text"
-                                  id="fullName"
-                                  placeholder="Enter Full Name"
-                                  className="form-input"
-                                />
-                                {touched.fullName && errors.fullName && (
-                                  <div className="text-danger mt-1">
-                                    {errors.fullName}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.email && errors.email
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="email">Email</label>
-                                <Field
-                                  name="email"
-                                  type="email"
-                                  id="email"
-                                  placeholder="Enter Email"
-                                  className="form-input"
-                                />
-                                {touched.email && errors.email && (
-                                  <div className="text-danger mt-1">
-                                    {errors.email}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.phone && errors.phone
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="phone">Phone Number</label>
-                                <Field
-                                  name="phone"
-                                  type="text"
-                                  id="phone"
-                                  placeholder="Enter Phone Number"
-                                  className="form-input"
-                                />
-                                {touched.phone && errors.phone && (
-                                  <div className="text-danger mt-1">
-                                    {errors.phone}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.course && errors.course
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="course">Course</label>
-                                <Field
-                                  name="course"
-                                  as="select"
-                                  id="course"
-                                  className="form-input"
-                                >
-                                  <option value="">Select a Course</option>
-                                  <option value="frontend">
-                                    Frontend Development
-                                  </option>
-                                  <option value="backend">
-                                    Backend Development
-                                  </option>
-                                  <option value="fullstack">
-                                    Fullstack Development
-                                  </option>
-                                </Field>
-                                {touched.course && errors.course && (
-                                  <div className="text-danger mt-1">
-                                    {errors.course}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.dob && errors.dob
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="dob">Date of Birth</label>
-                                <Field
-                                  name="dob"
-                                  type="date"
-                                  id="dob"
-                                  className="form-input"
-                                />
-                                {touched.dob && errors.dob && (
-                                  <div className="text-danger mt-1">
-                                    {errors.dob}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.startDate && errors.startDate
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="startDate">Start Date</label>
-                                <Field
-                                  name="startDate"
-                                  type="date"
-                                  id="startDate"
-                                  className="form-input"
-                                />
-                                {touched.startDate && errors.startDate && (
-                                  <div className="text-danger mt-1">
-                                    {errors.startDate}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.age && errors.age
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="age">Age</label>
-                                <Field
-                                  name="age"
-                                  type="number"
-                                  id="age"
-                                  placeholder="Enter Age"
-                                  className="form-input"
-                                />
-                                {touched.age && errors.age && (
-                                  <div className="text-danger mt-1">
-                                    {errors.age}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.country && errors.country
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="country">Country</label>
-                                <Field
-                                  name="country"
-                                  type="text"
-                                  id="country"
-                                  placeholder="Enter Country"
-                                  className="form-input"
-                                />
-                                {touched.country && errors.country && (
-                                  <div className="text-danger mt-1">
-                                    {errors.country}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.city && errors.city
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="city">City</label>
-                                <Field
-                                  name="city"
-                                  type="text"
-                                  id="city"
-                                  placeholder="Enter City"
-                                  className="form-input"
-                                />
-                                {touched.city && errors.city && (
-                                  <div className="text-danger mt-1">
-                                    {errors.city}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.pincode && errors.pincode
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="pincode">Pincode</label>
-                                <Field
-                                  name="pincode"
-                                  type="text"
-                                  id="pincode"
-                                  placeholder="Enter Pincode"
-                                  className="form-input"
-                                />
-                                {touched.pincode && errors.pincode && (
-                                  <div className="text-danger mt-1">
-                                    {errors.pincode}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.status && errors.status
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="status">Status</label>
-                                <Field
-                                  name="status"
-                                  as="select"
-                                  id="status"
-                                  className="form-input"
-                                >
-                                  <option value="">Select Status</option>
-                                  <option value="completed">Completed</option>
-                                  <option value="in-progress">
-                                    In Progress
-                                  </option>
-                                </Field>
-                                {touched.status && errors.status && (
-                                  <div className="text-danger mt-1">
-                                    {errors.status}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            {/* Combined Save/Submit Button */}
-                            <button
-                              type="submit"
-                              className="btn btn-primary !mt-6 ltr:ml-4 rtl:mr-4"
-                            >
-                              {isAddstudent ? "Save" : "Submit Form"}
-                            </button>
-                          </Form>
-                        )}
-                      </Formik>
-
-                      <div className="mt-8 flex items-center justify-end">
-                        <button
-                          type="button"
-                          className="btn btn-outline-danger"
-                          onClick={() => setModal1(false)}
-                        >
-                          Discard
-                        </button>
-                      </div>
-                    </div>
-                  </Dialog.Panel>
-                </Transition.Child>
-              </div>
-            </div>
-          </Dialog>
-        </Transition>
-
-        <Transition appear show={modal2} as={Fragment}>
-          <Dialog as="div" open={modal2} onClose={() => setModal2(false)}>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0" />
-            </Transition.Child>
-            <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
-              <div className="flex min-h-screen items-start justify-center px-4">
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
-                >
-                  <Dialog.Panel
-                    as="div"
-                    className="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark"
-                  >
-                    <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
-                      <div className="text-lg font-bold">Edit Student</div>
-                      <button
-                        type="button"
-                        className="text-white-dark hover:text-dark"
-                        onClick={() => setModal2(false)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="p-5">
-                      <Formik
-                        initialValues={{
-                          fullName: "",
-                          email: "",
-                          phone: "",
-                          course: "",
-                          dob: "",
-                          startDate: "",
-                          age: "",
-                          country: "",
-                          city: "",
-                          pincode: "",
-                          status: "",
-                        }}
-                        validationSchema={EditstudentForm}
-                        onSubmit={(values) => {
-                          console.log("Form Editstudent:", values);
-                          setIsEditstudent(true); // Mark as Editstudent
-                          setModal1(false); // Close modal after submission
-                        }}
-                      >
-                        {({ errors, touched }) => (
-                          <Form className="space-y-5">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                              <div
-                                className={
-                                  touched.fullName && errors.fullName
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="fullName">Full Name</label>
-                                <Field
-                                  name="fullName"
-                                  type="text"
-                                  id="fullName"
-                                  placeholder="Enter Full Name"
-                                  className="form-input"
-                                />
-                                {touched.fullName && errors.fullName && (
-                                  <div className="text-danger mt-1">
-                                    {errors.fullName}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.email && errors.email
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="email">Email</label>
-                                <Field
-                                  name="email"
-                                  type="email"
-                                  id="email"
-                                  placeholder="Enter Email"
-                                  className="form-input"
-                                />
-                                {touched.email && errors.email && (
-                                  <div className="text-danger mt-1">
-                                    {errors.email}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.phone && errors.phone
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="phone">Phone Number</label>
-                                <Field
-                                  name="phone"
-                                  type="text"
-                                  id="phone"
-                                  placeholder="Enter Phone Number"
-                                  className="form-input"
-                                />
-                                {touched.phone && errors.phone && (
-                                  <div className="text-danger mt-1">
-                                    {errors.phone}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.course && errors.course
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="course">Course</label>
-                                <Field
-                                  name="course"
-                                  as="select"
-                                  id="course"
-                                  className="form-input"
-                                >
-                                  <option value="">Select a Course</option>
-                                  <option value="frontend">
-                                    Frontend Development
-                                  </option>
-                                  <option value="backend">
-                                    Backend Development
-                                  </option>
-                                  <option value="fullstack">
-                                    Fullstack Development
-                                  </option>
-                                </Field>
-                                {touched.course && errors.course && (
-                                  <div className="text-danger mt-1">
-                                    {errors.course}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.dob && errors.dob
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="dob">Date of Birth</label>
-                                <Field
-                                  name="dob"
-                                  type="date"
-                                  id="dob"
-                                  className="form-input"
-                                />
-                                {touched.dob && errors.dob && (
-                                  <div className="text-danger mt-1">
-                                    {errors.dob}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.startDate && errors.startDate
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="startDate">Start Date</label>
-                                <Field
-                                  name="startDate"
-                                  type="date"
-                                  id="startDate"
-                                  className="form-input"
-                                />
-                                {touched.startDate && errors.startDate && (
-                                  <div className="text-danger mt-1">
-                                    {errors.startDate}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.age && errors.age
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="age">Age</label>
-                                <Field
-                                  name="age"
-                                  type="number"
-                                  id="age"
-                                  placeholder="Enter Age"
-                                  className="form-input"
-                                />
-                                {touched.age && errors.age && (
-                                  <div className="text-danger mt-1">
-                                    {errors.age}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.country && errors.country
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="country">Country</label>
-                                <Field
-                                  name="country"
-                                  type="text"
-                                  id="country"
-                                  placeholder="Enter Country"
-                                  className="form-input"
-                                />
-                                {touched.country && errors.country && (
-                                  <div className="text-danger mt-1">
-                                    {errors.country}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.city && errors.city
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="city">City</label>
-                                <Field
-                                  name="city"
-                                  type="text"
-                                  id="city"
-                                  placeholder="Enter City"
-                                  className="form-input"
-                                />
-                                {touched.city && errors.city && (
-                                  <div className="text-danger mt-1">
-                                    {errors.city}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.pincode && errors.pincode
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="pincode">Pincode</label>
-                                <Field
-                                  name="pincode"
-                                  type="text"
-                                  id="pincode"
-                                  placeholder="Enter Pincode"
-                                  className="form-input"
-                                />
-                                {touched.pincode && errors.pincode && (
-                                  <div className="text-danger mt-1">
-                                    {errors.pincode}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div
-                                className={
-                                  touched.status && errors.status
-                                    ? "has-error"
-                                    : "has-success"
-                                }
-                              >
-                                <label htmlFor="status">Status</label>
-                                <Field
-                                  name="status"
-                                  as="select"
-                                  id="status"
-                                  className="form-input"
-                                >
-                                  <option value="">Select Status</option>
-                                  <option value="completed">Completed</option>
-                                  <option value="in-progress">
-                                    In Progress
-                                  </option>
-                                </Field>
-                                {touched.status && errors.status && (
-                                  <div className="text-danger mt-1">
-                                    {errors.status}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            {/* Combined Save/Submit Button */}
-                            <button
-                              type="submit"
-                              className="btn btn-primary !mt-6 ltr:ml-4 rtl:mr-4"
-                            >
-                              {isEditstudent ? "Save" : "Submit Form"}
-                            </button>
-                          </Form>
-                        )}
-                      </Formik>
-
-                      <div className="mt-8 flex items-center justify-end">
-                        <button
-                          type="button"
-                          className="btn btn-outline-danger"
-                          onClick={() => setModal2(false)}
-                        >
-                          Discard
-                        </button>
-                        {/* <button
-                          type="button"
-                          className="btn btn-primary ltr:ml-4 rtl:mr-4"
-                          onClick={() => setModal2(false)}
-                        >
-                          Save
-                        </button> */}
-                      </div>
-                    </div>
-                  </Dialog.Panel>
-                </Transition.Child>
-              </div>
-            </div>
-          </Dialog>
-        </Transition>
-      </div>
-      <div className="panel">
-        <div className="flex md:items-center justify-between md:flex-row flex-col mb-4.5 gap-5">
-          <div className="flex items-center flex-wrap">
-            <button
+      <div className="flex justify-between mb-4 panel bg-light">
+      <div className="flex gap-4">
+      <button
               type="button"
-              onClick={() => exportTable("csv")}
+              onClick={exportToCSV}
               className="btn btn-primary btn-sm m-1 "
             >
               <svg
@@ -1603,10 +218,11 @@ const Studentlistold = () => {
                 />
               </svg>
               CSV
-            </button>
-            <button
+      </button>
+            
+      <button
               type="button"
-              onClick={() => exportTable("txt")}
+              onClick={exportToPDF}
               className="btn btn-primary btn-sm m-1"
             >
               <svg
@@ -1642,12 +258,11 @@ const Studentlistold = () => {
                   strokeWidth="1.5"
                 />
               </svg>
-              TXT
-            </button>
-
-            <button
+              PDF
+      </button>
+      <button
               type="button"
-              onClick={() => exportTable("print")}
+              onClick={printTableData}
               className="btn btn-primary btn-sm m-1"
             >
               <svg
@@ -1711,149 +326,341 @@ const Studentlistold = () => {
                 />
               </svg>
               PRINT
-            </button>
-          </div>
-
-          {/* <button type="button" className="btn btn-primary">Add Student</button> */}
-          <div className="flex items-center justify-center  gap-5">
-            <input
-              type="text"
-              className="form-input w-auto"
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => setModal1(true)}
-            >
-              Add Student
-            </button>
-          </div>
+      </button>
+          
         </div>
-        <div className="datatables">
-          <DataTable
-            highlightOnHover
-            className="whitespace-nowrap table-hover"
-            records={recordsData}
-            columns={[
-              { accessor: "id", title: "#", sortable: true },
-              { accessor: "firstName", sortable: true },
-              // { accessor: 'lastName', sortable: true },
-              { accessor: "course", title: "Course", sortable: true },
-              // { accessor: 'age', title: 'Age', sortable: true },
-              {
-                accessor: "dob",
-                title: "Start Date",
-                sortable: true,
-                render: ({ dob }) => <div>{formatDate(dob)}</div>,
-              },
-              { accessor: "email", sortable: true },
-              { accessor: "phone", sortable: true },
-              {
-                accessor: "status",
-                title: "Status",
-                sortable: true,
-                render: () => (
-                  <span className={`badge bg-${randomColor()} `}>
-                    {randomStatus()}
-                  </span>
-                ),
-              },
-              {
-                accessor: "action",
-                title: "Action",
-                titleClassName: "!text-center",
-                render: () => (
-                  <div className="flex items-center w-max mx-auto gap-2">
-                    <Tippy content="Edit">
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-5 h-5"
-                        onClick={() => setModal2(true)} // Add the onClick handler here
-                      >
-                        <path
-                          d="M15.2869 3.15178L14.3601 4.07866L5.83882 12.5999L5.83881 12.5999C5.26166 13.1771 4.97308 13.4656 4.7249 13.7838C4.43213 14.1592 4.18114 14.5653 3.97634 14.995C3.80273 15.3593 3.67368 15.7465 3.41556 16.5208L2.32181 19.8021L2.05445 20.6042C1.92743 20.9852 2.0266 21.4053 2.31063 21.6894C2.59466 21.9734 3.01478 22.0726 3.39584 21.9456L4.19792 21.6782L7.47918 20.5844L7.47919 20.5844C8.25353 20.3263 8.6407 20.1973 9.00498 20.0237C9.43469 19.8189 9.84082 19.5679 10.2162 19.2751C10.5344 19.0269 10.8229 18.7383 11.4001 18.1612L11.4001 18.1612L19.9213 9.63993L20.8482 8.71306C22.3839 7.17735 22.3839 4.68748 20.8482 3.15178C19.3125 1.61607 16.8226 1.61607 15.2869 3.15178Z"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                        />
-                        <path
-                          opacity="0.5"
-                          d="M14.36 4.07812C14.36 4.07812 14.4759 6.04774 16.2138 7.78564C17.9517 9.52354 19.9213 9.6394 19.9213 9.6394M4.19789 21.6777L2.32178 19.8015"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                        />
-                      </svg>
-                    </Tippy>
-
-                    <Tippy content="Delete">
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-5 h-5"
-                      >
-                        <path
-                          opacity="0.5"
-                          d="M9.17065 4C9.58249 2.83481 10.6937 2 11.9999 2C13.3062 2 14.4174 2.83481 14.8292 4"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                        />
-                        <path
-                          d="M20.5001 6H3.5"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                        />
-                        <path
-                          d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                        />
-                        <path
-                          opacity="0.5"
-                          d="M9.5 11L10 16"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                        />
-                        <path
-                          opacity="0.5"
-                          d="M14.5 11L14 16"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </Tippy>
-                  </div>
-                ),
-              },
-            ]}
-            totalRecords={initialRecords.length}
-            recordsPerPage={pageSize}
-            page={page}
-            onPageChange={(p) => setPage(p)}
-            recordsPerPageOptions={PAGE_SIZES}
-            onRecordsPerPageChange={setPageSize}
-            sortStatus={sortStatus}
-            onSortStatusChange={setSortStatus}
-            minHeight={200}
-            paginationText={({ from, to, totalRecords }) =>
-              `Showing  ${from} to ${to} of ${totalRecords} entries`
-            }
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Search"
+          className="form-input w-1/4"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button className="btn btn-primary" onClick={() => setIsAddStudentModalOpen(true)}>
+            Add Student
+        </button>
+          
       </div>
+
+      <div id="printableTable">
+      <DataTable
+        highlightOnHover
+        records={paginatedData}
+        columns={[
+          { accessor: "id", title: "ID" },
+          { accessor: "fullName", title: "Full Name" },
+          { accessor: "email", title: "Email" },
+          { accessor: "phone", title: "Phone" },
+          { accessor: "dob", title: "Date of Birth" },
+          { accessor: "course", title: "Course" },
+          {
+            accessor: "actions",
+            title: "Actions",
+            render: (record) => (
+              <div className="flex items-center w-max mx-auto gap-2">
+                <Tippy content="Edit">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5"
+                    onClick={() => {
+                      setEditStudent(record);
+                      setIsEditStudentModalOpen(true);
+                    }}
+                  >
+                    <path
+                      d="M15.2869 3.15178L14.3601 4.07866L5.83882 12.5999L5.83881 12.5999C5.26166 13.1771 4.97308 13.4656 4.7249 13.7838C4.43213 14.1592 4.18114 14.5653 3.97634 14.995C3.80273 15.3593 3.67368 15.7465 3.41556 16.5208L2.32181 19.8021L2.05445 20.6042C1.92743 20.9852 2.0266 21.4053 2.31063 21.6894C2.59466 21.9734 3.01478 22.0726 3.39584 21.9456L4.19792 21.6782L7.47918 20.5844L7.47919 20.5844C8.25353 20.3263 8.6407 20.1973 9.00498 20.0237C9.43469 19.8189 9.84082 19.5679 10.2162 19.2751C10.5344 19.0269 10.8229 18.7383 11.4001 18.1612L11.4001 18.1612L19.9213 9.63993L20.8482 8.71306C22.3839 7.17735 22.3839 4.68748 20.8482 3.15178C19.3125 1.61607 16.8226 1.61607 15.2869 3.15178Z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    />
+                    <path
+                      opacity="0.5"
+                      d="M14.36 4.07812C14.36 4.07812 14.4759 6.04774 16.2138 7.78564C17.9517 9.52354 19.9213 9.6394 19.9213 9.6394M4.19789 21.6777L2.32178 19.8015"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    />
+                  </svg>
+                </Tippy>
+
+                <Tippy content="Delete">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5"
+                    onClick={() => handleDeleteStudent(record.id)}
+                  >
+                    <path
+                      opacity="0.5"
+                      d="M9.17065 4C9.58249 2.83481 10.6937 2 11.9999 2C13.3062 2 14.4174 2.83481 14.8292 4"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M20.5001 6H3.5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      opacity="0.5"
+                      d="M9.5 11L10 16"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      opacity="0.5"
+                      d="M14.5 11L14 16"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </Tippy>
+              </div>
+            ),
+          },
+        ]}
+        pagination
+      />
+      </div>
+      
+
+      <div className="flex justify-between items-center bg-white p-2">
+
+      <div className="flex  items-center">
+        <span>Showing </span>
+        <select
+          className="form-select mx-2"
+          value={pageSize}
+          onChange={(e) => setPageSize (Number(e.target.value))}
+        >
+          <option value={10}>10 </option>
+          <option value={25}>25 </option>
+          <option value={50}>50 </option>
+          <option value={100}>100 </option>
+        </select>
+        <span>entries</span>
+      </div>
+<div className="flex items-center">
+  <button
+    className="btn btn-icon btn-primary rounded-full p-2"
+    disabled={currentPage === 1}
+    onClick={() => setCurrentPage((prev) => prev - 1)}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="w-5 h-5"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+    </svg>
+  </button>
+
+  <div className="flex gap-2 rounded-full bg-gray-100 p-2">
+  {paginationItems.map((item, index) => (
+    <div key={index} className="flex">
+      <button
+        className={`px-3 py-1 rounded-full ${
+          currentPage === index + 1
+            ? "bg-blue-500 text-white"
+            : "bg-gray-200 text-black"
+        }`}
+        onClick={() => setCurrentPage(index + 1)}
+      >
+        {item.props.children}
+      </button>
+    </div>
+  ))}
+</div>
+
+  <button
+    className="btn btn-icon btn-primary rounded-full p-2"
+    disabled={currentPage === totalPages}
+    onClick={() => setCurrentPage((prev) => prev + 1)}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="w-5 h-5"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5L15.75 12l-7.5 7.5" />
+    </svg>
+  </button>
+</div>
+
+      </div>
+
+      
+
+
+
+       {/* Add Student Modal */}
+       <Transition appear show={isAddStudentModalOpen} as={Fragment}>
+        <Dialog as="div" open={isAddStudentModalOpen} onClose={() => setIsAddStudentModalOpen(false)}>
+          <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+            <div className="flex items-center justify-center min-h-screen px-4">
+              <Dialog.Panel className="panel max-w-lg p-5 text-black bg-white rounded-lg">
+                <Formik
+                  initialValues={{
+                    fullName: "",
+                    email: "",
+                    phone: "",
+                    dob: "",
+                    course: "",
+                  }}
+                  validationSchema={AddStudentFormSchema}
+                  onSubmit={handleAddStudent}
+                >
+                  {({ errors, touched }) => (
+                    <Form className="space-y-5">
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                       <div>
+                        <label htmlFor="fullName">Full Name</label>
+                        <Field name="fullName" type="text" className="form-input" />
+                        {touched.fullName && errors.fullName && (
+                          <div className="text-danger">{errors.fullName}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="email">Email</label>
+                        <Field name="email" type="email" className="form-input" />
+                        {touched.email && errors.email && (
+                          <div className="text-danger">{errors.email}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="phone">Phone</label>
+                        <Field name="phone" type="text" className="form-input" />
+                        {touched.phone && errors.phone && (
+                          <div className="text-danger">{errors.phone}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="dob">Date of Birth</label>
+                        <Field name="dob" type="date" className="form-input" />
+                        {touched.dob && errors.dob && (
+                          <div className="text-danger">{errors.dob}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="course">Course</label>
+                        <Field name="course" as="select" className="form-input">
+                          <option value="">Select a course</option>
+                          <option value="Frontend">Frontend Development</option>
+                          <option value="Backend">Backend Development</option>
+                        </Field>
+                        {touched.course && errors.course && (
+                          <div className="text-danger">{errors.course}</div>
+                        )}
+                      </div>
+                       </div>
+                     
+                      <button type="submit" className="btn btn-primary">
+                        Add Student
+                      </button>
+                    </Form>
+                  )}
+                </Formik>
+              </Dialog.Panel>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      {/* Edit Student Modal */}
+      <Transition appear show={isEditStudentModalOpen} as={Fragment}>
+        <Dialog as="div" open={isEditStudentModalOpen} onClose={() => setIsEditStudentModalOpen(false)}>
+          <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+            <div className="flex items-center justify-center min-h-screen px-4">
+              <Dialog.Panel className="panel max-w-lg p-5 text-black bg-white rounded-lg">
+                <Formik
+                  initialValues={
+                    editStudent || {
+                      fullName: "",
+                      email: "",
+                      phone: "",
+                      dob: "",
+                      course: "",
+                    }
+                  }
+                  validationSchema={AddStudentFormSchema}
+                  onSubmit={handleEditStudent}
+                >
+                  {({ errors, touched }) => (
+                    <Form className="space-y-5">
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                       <div>
+                        <label htmlFor="fullName">Full Name</label>
+                        <Field name="fullName" type="text" className="form-input" />
+                        {touched.fullName && errors.fullName && (
+                          <div className="text-danger">{errors.fullName}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="email">Email</label>
+                        <Field name="email" type="email" className="form-input" />
+                        {touched.email && errors.email && (
+                          <div className="text-danger">{errors.email}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="phone">Phone</label>
+                        <Field name="phone" type="text" className="form-input" />
+                        {touched.phone && errors.phone && (
+                          <div className="text-danger">{errors.phone}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="dob">Date of Birth</label>
+                        <Field name="dob" type="date" className="form-input" />
+                        {touched.dob && errors.dob && (
+                          <div className="text-danger">{errors.dob}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="course">Course</label>
+                        <Field name="course" as="select" className="form-input">
+                          <option value="">Select a course</option>
+                          <option value="Frontend">Frontend Development</option>
+                          <option value="Backend">Backend Development</option>
+                        </Field>
+                        {touched.course && errors.course && (
+                          <div className="text-danger">{errors.course}</div>
+                        )}
+                      </div>
+                       </div>
+                      
+                      <button type="submit" className="btn btn-primary">
+                        Update Student
+                      </button>
+                    </Form>
+                  )}
+                </Formik>
+              </Dialog.Panel>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   );
 };
